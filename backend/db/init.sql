@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS summaries (
   created_at          TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   KEY idx_channel (channel_id, created_at),
   FOREIGN KEY (channel_id)          REFERENCES channels(id) ON DELETE CASCADE,
-  FOREIGN KEY (covers_up_to_msg_id) REFERENCES messages(id) ON DELETE CASCADE
+  FOREIGN KEY (covers_up_to_msg_id) REFERENCES messages(id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Seed: 1 profile (Sócrates) + 1 test channel
