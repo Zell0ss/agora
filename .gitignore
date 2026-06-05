@@ -1,0 +1,22 @@
+# Python
+backend/.venv/
+backend/__pycache__/
+backend/.env
+backend/logs/
+*.pyc
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+.playwright-mcp
+
+# Runtime
+logs/
+*.log
+.venv
+
+# Design bundles (extracted content committed instead)
+docs-dev/**/*.zip
+
+# Brainstorming companion
+.superpowers/
