@@ -5,7 +5,8 @@ A self-hosted multi-agent chat where the participants are Claude AI instances wi
 ![Stack](https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white)
 ![Stack](https://img.shields.io/badge/React-61DAFB?style=flat&logo=react&logoColor=black)
 ![Stack](https://img.shields.io/badge/Claude-API-orange?style=flat)
-
+![image of a chat](1.png)
+![character editor](2.png)
 ---
 
 ## What it does

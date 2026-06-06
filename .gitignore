@@ -21,6 +21,7 @@ docs-disenio/
 .ruff_cache/
 .pytest_cache/
 .env
+.pids/
 # Design bundles (extracted content committed instead)
 docs-dev/**/*.zip
 
