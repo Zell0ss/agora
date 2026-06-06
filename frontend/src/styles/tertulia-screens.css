@@ -1,0 +1,379 @@
+/* ============================================================
+   Agora — layout de pantallas (chat, sidebar, crear, estados)
+   Depende de tertulia.css (variables + átomos)
+   ============================================================ */
+
+/* ---- ventana de app (chrome tranquilo) ---- */
+.t-app {
+  display: grid;
+  grid-template-columns: 304px 1fr;
+  height: 100%;
+  background: var(--paper);
+  overflow: hidden;
+}
+
+/* ============================================================
+   Barra lateral
+   ============================================================ */
+.t-side { display: flex; flex-direction: column; background: var(--sidebar); border-right: 1px solid var(--line); min-height: 0; }
+.t-side-top { padding: 18px 18px 12px; }
+.t-brandrow { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.t-wordmark { font-family: var(--serif); font-size: 25px; font-weight: 500; letter-spacing: -.01em; color: var(--ink); }
+.t-wordmark .dot { color: var(--voice-vera); }
+.t-newbtn {
+  width: 100%; justify-content: center; white-space: nowrap;
+  font-family: var(--sans); font-size: 14px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px; border-radius: 10px; border: none; cursor: pointer;
+  color: var(--primary-ink); background: var(--primary);
+}
+.t-search {
+  margin: 4px 18px 8px; display: flex; align-items: center; gap: 8px;
+  padding: 8px 11px; border-radius: 9px; background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line); color: var(--ink-faint); font-size: 13.5px;
+}
+.t-side-list { flex: 1 1 auto; overflow-y: auto; padding: 6px 10px 14px; min-height: 0; }
+.t-side-label { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-ghost); padding: 8px 8px 6px; }
+
+.t-chan {
+  display: grid; grid-template-columns: auto 1fr auto; gap: 10px;
+  align-items: start; padding: 10px 10px; border-radius: 11px; cursor: pointer;
+  transition: background .12s;
+}
+.t-chan:hover { background: color-mix(in oklab, var(--ink-faint) 7%, transparent); }
+.t-chan.is-active { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-soft); }
+.t-chan-av { padding-top: 2px; }
+.t-chan-mid { min-width: 0; }
+.t-chan-title {
+  font-size: 14.5px; font-weight: 600; color: var(--ink);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;
+}
+.t-chan-prev {
+  font-size: 12.5px; color: var(--ink-faint); line-height: 1.35;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.t-chan-right { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
+.t-chan-time { font-family: var(--mono); font-size: 10.5px; color: var(--ink-ghost); }
+.t-chan-mode { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-ghost); }
+
+/* ============================================================
+   Área principal
+   ============================================================ */
+.t-main { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--paper); }
+
+.t-head {
+  display: flex; align-items: center; gap: 14px;
+  padding: 14px 22px; border-bottom: 1px solid var(--line);
+  background: color-mix(in oklab, var(--paper) 85%, var(--surface));
+}
+.t-head-title { font-family: var(--serif); font-size: 21px; font-weight: 500; letter-spacing: -.01em; color: var(--ink); }
+.t-head-meta { display: flex; align-items: center; gap: 10px; }
+.t-head-roster { display: flex; align-items: center; gap: 8px; padding-left: 4px; }
+.t-head-spacer { flex: 1 1 auto; }
+
+/* ---- hilo ---- */
+.t-thread { flex: 1 1 auto; overflow-y: auto; padding: 26px 0 8px; min-height: 0; }
+.t-thread-inner { max-width: 760px; margin: 0 auto; padding: 0 30px; display: flex; flex-direction: column; gap: 22px; }
+.t-daysep { display: flex; align-items: center; justify-content: center; }
+.t-daysep span { font-size: 11.5px; color: var(--ink-ghost); background: var(--paper); padding: 0 12px; font-family: var(--mono); }
+
+/* ---- mensaje ---- */
+.t-msg { display: flex; gap: 12px; align-items: flex-start; }
+.t-msg.is-user { justify-content: flex-end; }
+.t-msg-body { min-width: 0; flex: 0 1 auto; }
+.t-msg-head { display: flex; align-items: baseline; gap: 7px; margin-bottom: 3px; white-space: nowrap; flex-wrap: nowrap; }
+.t-rolechip { white-space: nowrap; }
+.t-msg-name { font-size: 14.5px; font-weight: 700; letter-spacing: -.005em; color: var(--vc, var(--ink)); }
+.t-msg-text { font-size: 15.5px; line-height: 1.58; color: var(--ink); text-wrap: pretty; max-width: 60ch; }
+.t-mention { color: var(--vc, var(--voice-iris)); font-weight: 600; }
+/* nota: la mención hereda el color de la voz de quien escribe; bien así */
+
+/* burbuja del usuario */
+.t-bubble.is-user {
+  background: var(--user-bubble); color: var(--user-ink);
+  padding: 11px 15px 9px; border-radius: 16px 16px 5px 16px;
+  max-width: 60ch; box-shadow: var(--sh-card);
+}
+.t-bubble.is-user .t-msg-text { color: var(--user-ink); }
+.t-bubble-time { display: block; text-align: right; margin-top: 4px; opacity: .8; }
+
+/* caret de streaming */
+.t-caret {
+  display: inline-block; width: 8px; height: 1.05em; vertical-align: -2px;
+  margin-left: 2px; background: var(--vc, var(--ink)); border-radius: 1px;
+  animation: t-blink 1s steps(1) infinite;
+}
+@keyframes t-blink { 50% { opacity: 0; } }
+
+/* ---- variantes de fila de mensaje ---- */
+.t-msg.row-rule .t-msg-body {
+  border-left: 2.5px solid var(--vc); padding-left: 13px; margin-left: -2px;
+}
+.t-msg.row-tint .t-msg-body {
+  background: var(--vt); padding: 9px 14px 10px; border-radius: 4px 13px 13px 13px;
+}
+.t-msg.row-tint .t-msg-text { max-width: 54ch; }
+
+/* ---- indicadores pensando ---- */
+.t-dots { display: inline-flex; gap: 3px; align-items: center; }
+.t-dots i { width: 5px; height: 5px; border-radius: 50%; background: var(--vc, var(--ink-faint)); animation: t-bounce 1.2s infinite ease-in-out; }
+.t-dots i:nth-child(2) { animation-delay: .18s; }
+.t-dots i:nth-child(3) { animation-delay: .36s; }
+@keyframes t-bounce { 0%, 60%, 100% { transform: translateY(0); opacity: .45; } 30% { transform: translateY(-3px); opacity: 1; } }
+
+.t-think-pill {
+  display: inline-flex; align-items: center; gap: 8px; align-self: flex-start;
+  padding: 5px 12px 5px 6px; border-radius: 999px;
+  background: color-mix(in oklab, var(--vc) 9%, var(--surface));
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--vc) 30%, transparent);
+}
+.t-think-name { font-size: 13px; font-weight: 600; color: var(--vc); }
+.t-think-typing { font-size: 14px; color: var(--ink-faint); display: inline-flex; align-items: center; gap: 6px; }
+.t-think-typing .t-msg-name { color: var(--vc); }
+.t-shimmer { display: flex; flex-direction: column; gap: 8px; padding-top: 4px; }
+.t-shimmer span {
+  height: 11px; border-radius: 6px; width: 100%;
+  background: linear-gradient(90deg, var(--line-soft) 25%, color-mix(in oklab, var(--vc) 16%, var(--line-soft)) 50%, var(--line-soft) 75%);
+  background-size: 200% 100%; animation: t-shim 1.4s linear infinite;
+}
+.t-shimmer span:nth-child(2) { animation-delay: .2s; }
+@keyframes t-shim { to { background-position: -200% 0; } }
+
+/* ---- input ---- */
+.t-composer { padding: 12px 30px 20px; border-top: 1px solid var(--line); background: color-mix(in oklab, var(--paper) 80%, var(--surface)); }
+.t-composer-inner { max-width: 760px; margin: 0 auto; }
+.t-inputbar {
+  display: flex; align-items: flex-end; gap: 10px;
+  background: var(--surface); border-radius: 16px; padding: 8px 8px 8px 16px;
+  box-shadow: inset 0 0 0 1px var(--line), var(--sh-card);
+}
+.t-input-field { flex: 1 1 auto; padding: 7px 0; min-height: 24px; }
+.t-input-ph { color: var(--ink-ghost); font-size: 15px; }
+.t-input-typed { font-size: 15px; color: var(--ink); }
+.t-input-actions { display: flex; align-items: center; gap: 8px; }
+.t-sendbtn { width: 38px; height: 38px; border-radius: 11px; border: none; cursor: pointer; display: grid; place-items: center; color: var(--primary-ink); background: var(--primary); }
+.t-composer-hint { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; color: var(--ink-ghost); padding-left: 4px; }
+.t-kbd { font-family: var(--mono); font-size: 11px; padding: 1px 5px; border-radius: 4px; background: color-mix(in oklab, var(--ink-faint) 12%, transparent); color: var(--ink-faint); }
+
+/* ---- popover de @mención ---- */
+.t-mentionpop {
+  background: var(--raised); border-radius: 12px; box-shadow: var(--sh-pop);
+  padding: 5px; width: 320px; box-shadow: var(--sh-pop), inset 0 0 0 1px var(--line-soft);
+}
+.t-mentionpop-h { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-ghost); padding: 7px 10px 5px; }
+.t-mentionopt { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; cursor: pointer; }
+.t-mentionopt.is-on { background: color-mix(in oklab, var(--ink-faint) 9%, transparent); }
+.t-mentionopt .nm { font-size: 14px; font-weight: 600; color: var(--vc); }
+.t-mentionopt .rl { font-size: 12.5px; color: var(--ink-faint); }
+
+/* ============================================================
+   Pantalla B · Crear canal
+   ============================================================ */
+.t-sheet { height: 100%; background: var(--paper); display: flex; flex-direction: column; overflow: hidden; }
+.t-sheet-head { padding: 22px 30px 18px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px; }
+.t-sheet-eyebrow { font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-ghost); }
+.t-sheet-title { font-family: var(--serif); font-size: 24px; font-weight: 500; color: var(--ink); letter-spacing: -.01em; }
+.t-sheet-body { flex: 1 1 auto; overflow-y: auto; padding: 24px 30px 30px; }
+.t-sheet-inner { max-width: 600px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+.t-field-label { font-size: 13px; font-weight: 700; color: var(--ink-soft); margin-bottom: 9px; letter-spacing: .01em; }
+.t-titlefield {
+  width: 100%; font-family: var(--serif); font-size: 22px; color: var(--ink);
+  background: var(--surface); border: none; border-radius: 12px; padding: 14px 16px;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.t-titlefield .ph { color: var(--ink-ghost); }
+
+/* selector de modo */
+.t-modeseg { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.t-modecard {
+  padding: 14px 16px; border-radius: 12px; cursor: pointer; background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--line); transition: box-shadow .12s, background .12s;
+}
+.t-modecard.is-on { box-shadow: inset 0 0 0 2px var(--primary); background: var(--raised); }
+.t-modecard-t { font-size: 15px; font-weight: 700; color: var(--ink); margin-bottom: 3px; display: flex; align-items: center; gap: 8px; }
+.t-modecard-d { font-size: 12.5px; color: var(--ink-faint); line-height: 1.4; }
+.t-modedot { width: 8px; height: 8px; border-radius: 50%; background: var(--voice-bruno); }
+.t-modecard:nth-child(2) .t-modedot { background: var(--voice-vera); }
+
+/* picker de tertulianos */
+.t-pickhead { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px; }
+.t-pickcount { font-size: 12.5px; font-family: var(--mono); color: var(--ink-faint); }
+.t-pickcount.is-full { color: var(--voice-vera); }
+.t-picklist { display: flex; flex-direction: column; gap: 8px; }
+
+.t-prow {
+  display: flex; align-items: center; gap: 12px; padding: 11px 13px; border-radius: 12px;
+  background: var(--surface); box-shadow: inset 0 0 0 1px var(--line); cursor: pointer;
+  transition: box-shadow .12s, opacity .12s;
+}
+.t-prow.is-sel { box-shadow: inset 0 0 0 2px var(--primary); }
+.t-prow.is-dim { opacity: .5; }
+.t-prow-body { flex: 1 1 auto; min-width: 0; }
+.t-prow-top { display: flex; align-items: baseline; gap: 7px; flex-wrap: wrap; }
+.t-prow-name { font-size: 15px; font-weight: 700; color: var(--vc, var(--ink)); }
+.t-prow-sub { font-size: 12.5px; color: var(--ink-faint); margin-top: 1px; }
+.t-tag-fac { font-size: 10px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; color: var(--ink-ghost); box-shadow: inset 0 0 0 1px var(--line); padding: 1px 6px; border-radius: 999px; }
+.t-check { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; flex: 0 0 auto; box-shadow: inset 0 0 0 1.5px var(--line); color: transparent; }
+.t-prow.is-sel .t-check { background: var(--primary); box-shadow: none; color: var(--primary-ink); }
+.t-hand { font-size: 12px; font-weight: 600; color: var(--voice-iris); white-space: nowrap; }
+
+/* aviso de "Que se apunten" */
+.t-suggest-banner {
+  display: flex; align-items: center; gap: 10px; padding: 11px 14px; border-radius: 11px;
+  background: var(--tint-iris); color: var(--ink-soft); font-size: 13.5px; line-height: 1.4;
+}
+.t-suggest-why { font-size: 12.5px; color: var(--ink-faint); font-style: italic; margin-top: 3px; }
+.t-sheet-foot { padding: 16px 30px; border-top: 1px solid var(--line); display: flex; align-items: center; justify-content: flex-end; gap: 12px; background: color-mix(in oklab, var(--paper) 82%, var(--surface)); }
+
+/* ============================================================
+   Estados (vacío / error)
+   ============================================================ */
+.t-empty { flex: 1 1 auto; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 40px; gap: 16px; }
+.t-empty-stack { margin-bottom: 4px; }
+.t-empty-title { font-family: var(--serif); font-size: 26px; font-weight: 500; color: var(--ink); }
+.t-empty-sub { font-size: 14.5px; color: var(--ink-faint); max-width: 38ch; line-height: 1.5; }
+.t-chips { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 4px; }
+.t-chip { font-size: 13px; color: var(--ink-soft); padding: 7px 13px; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--line); background: var(--surface); cursor: pointer; }
+
+.t-error {
+  display: flex; align-items: center; gap: 11px; align-self: flex-start;
+  padding: 10px 14px; border-radius: 11px; background: var(--warn-bg);
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--warn) 35%, transparent);
+  font-size: 13.5px; color: var(--ink-soft); max-width: 60ch;
+}
+.t-error .t-error-ico { color: var(--warn); }
+.t-error b { color: var(--warn); font-weight: 700; }
+.t-retry { margin-left: 4px; font-size: 13px; font-weight: 700; color: var(--warn); background: none; border: none; cursor: pointer; text-decoration: underline; text-underline-offset: 2px; }
+
+/* ============================================================
+   Tarjetas de variación (mini comparativas)
+   ============================================================ */
+.t-vcard { background: var(--paper); height: 100%; padding: 22px; display: flex; flex-direction: column; gap: 16px; }
+.t-vcard-note { font-size: 12.5px; color: var(--ink-faint); line-height: 1.45; }
+.t-swatchrow { display: flex; flex-direction: column; gap: 14px; }
+.t-swatch-lab { font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-ghost); margin-bottom: 8px; }
+.t-avtrio { display: flex; gap: 26px; align-items: flex-start; }
+.t-avtrio-item { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.t-avtrio-cap { font-size: 11.5px; color: var(--ink-faint); }
+
+/* ---- toggle de tema global ---- */
+.t-themesw {
+  display: inline-flex; align-items: center; gap: 2px; padding: 2px;
+  border-radius: 999px; background: var(--surface); border: none; cursor: pointer;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.t-themesw-opt {
+  width: 25px; height: 23px; border-radius: 999px; display: grid; place-items: center;
+  color: var(--ink-ghost); transition: background .15s, color .15s;
+}
+.t-themesw-opt.is-on { background: color-mix(in oklab, var(--ink-faint) 17%, transparent); color: var(--ink); }
+
+/* ---- toggle de tema global (overlay, sin uso por ahora) ---- */
+.t-theme-toggle {
+  position: fixed; top: 16px; right: 18px; z-index: 50;
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: "Hanken Grotesk", sans-serif; font-size: 13px; font-weight: 600;
+  padding: 8px 13px; border-radius: 999px; border: none; cursor: pointer;
+  background: #fff; color: #3a342c;
+  box-shadow: 0 2px 4px rgba(40,30,20,.08), 0 8px 24px rgba(40,30,20,.14), inset 0 0 0 1px rgba(40,30,20,.08);
+}
+
+/* ============================================================
+   Pantalla C · Editor de perfiles
+   ============================================================ */
+.t-editor { height: 100%; display: grid; grid-template-columns: 264px 1fr; background: var(--paper); overflow: hidden; }
+
+/* lista */
+.t-ed-list { display: flex; flex-direction: column; background: var(--sidebar); border-right: 1px solid var(--line); min-height: 0; }
+.t-ed-list-head { display: flex; align-items: center; justify-content: space-between; padding: 18px 16px 12px; }
+.t-ed-list-scroll { flex: 1 1 auto; overflow-y: auto; padding: 2px 10px 10px; display: flex; flex-direction: column; gap: 3px; min-height: 0; }
+.t-ed-litem { display: flex; align-items: center; gap: 11px; padding: 9px 11px; border-radius: 11px; cursor: pointer; transition: background .12s; }
+.t-ed-litem:hover { background: color-mix(in oklab, var(--ink-faint) 7%, transparent); }
+.t-ed-litem.is-active { background: var(--surface); box-shadow: inset 0 0 0 1px var(--line-soft); }
+.t-ed-litem-name { font-size: 14.5px; font-weight: 700; color: var(--vc, var(--ink)); line-height: 1.2; }
+.t-ed-litem-role { font-size: 12px; color: var(--ink-faint); }
+.t-ed-list-foot { padding: 12px 16px; border-top: 1px solid var(--line); }
+
+/* formulario */
+.t-ed-form { display: flex; flex-direction: column; min-width: 0; min-height: 0; background: var(--paper); }
+.t-ed-form-head { display: flex; align-items: center; gap: 13px; padding: 18px 26px; border-bottom: 1px solid var(--line); background: color-mix(in oklab, var(--paper) 85%, var(--surface)); }
+.t-ed-form-title { font-family: var(--serif); font-size: 23px; font-weight: 500; color: var(--vc, var(--ink)); letter-spacing: -.01em; line-height: 1.1; }
+.t-ed-form-body { flex: 1 1 auto; overflow-y: auto; padding: 24px 26px; min-height: 0; }
+.t-ed-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 20px 18px; max-width: 720px; }
+.t-fld { min-width: 0; }
+.t-fld-hint { font-size: 11.5px; color: var(--ink-ghost); margin-top: 6px; line-height: 1.4; }
+
+.t-input {
+  font-size: 15px; color: var(--ink); background: var(--surface);
+  border-radius: 10px; padding: 11px 14px; box-shadow: inset 0 0 0 1px var(--line);
+}
+.t-textarea {
+  font-size: 14px; line-height: 1.6; color: var(--ink-soft); background: var(--surface);
+  border-radius: 12px; padding: 14px 16px; box-shadow: inset 0 0 0 1px var(--line);
+  text-wrap: pretty; min-height: 132px;
+}
+.t-select {
+  display: flex; align-items: center; justify-content: space-between;
+  font-size: 15px; color: var(--ink); background: var(--surface);
+  border-radius: 10px; padding: 11px 12px 11px 14px; box-shadow: inset 0 0 0 1px var(--line); cursor: pointer;
+}
+.t-select svg { color: var(--ink-faint); }
+
+/* segmentado */
+.t-seg { display: inline-flex; background: var(--surface); border-radius: 10px; padding: 3px; box-shadow: inset 0 0 0 1px var(--line); gap: 2px; }
+.t-seg-btn {
+  flex: 1; font-family: var(--sans); font-size: 13px; font-weight: 600; color: var(--ink-faint);
+  background: transparent; border: none; cursor: pointer; padding: 7px 12px; border-radius: 8px; white-space: nowrap;
+  transition: background .12s, color .12s;
+}
+.t-seg-btn.is-on { background: var(--raised); color: var(--ink); box-shadow: var(--sh-card); }
+
+/* color de voz */
+.t-voicerow { display: flex; align-items: center; gap: 10px; }
+.t-voicesw {
+  width: 34px; height: 34px; border-radius: 50%; border: none; cursor: pointer; padding: 0;
+  display: grid; place-items: center; background: transparent; box-shadow: inset 0 0 0 2px transparent;
+  transition: box-shadow .12s;
+}
+.t-voicesw-dot { width: 22px; height: 22px; border-radius: 50%; background: var(--vc); }
+.t-voicesw.is-on { box-shadow: inset 0 0 0 2px var(--vc); }
+.t-voicesw.is-on .t-voicesw-dot { width: 18px; height: 18px; box-shadow: 0 0 0 2px var(--surface); }
+.t-voicerow-note { font-size: 12px; color: var(--ink-faint); line-height: 1.4; margin-left: 4px; max-width: 38ch; }
+
+/* temperatura */
+.t-temp { padding-top: 4px; }
+.t-temp-track { position: relative; height: 6px; border-radius: 999px; background: color-mix(in oklab, var(--ink-faint) 18%, transparent); }
+.t-temp-fill { position: absolute; left: 0; top: 0; height: 100%; border-radius: 999px; background: var(--primary); }
+.t-temp-knob { position: absolute; top: 50%; width: 16px; height: 16px; border-radius: 50%; background: var(--raised); box-shadow: inset 0 0 0 2px var(--primary), var(--sh-card); transform: translate(-50%, -50%); }
+.t-temp-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 9px; font-size: 11px; color: var(--ink-ghost); }
+.t-temp-val { font-family: var(--mono); color: var(--ink-faint); }
+
+.t-ed-form-foot { display: flex; align-items: center; gap: 12px; padding: 14px 26px; border-top: 1px solid var(--line); background: color-mix(in oklab, var(--paper) 82%, var(--surface)); }
+
+/* ============================================================
+   Exportar a markdown — modal sencillo
+   ============================================================ */
+.t-modal-backdrop {
+  position: absolute; inset: 0; z-index: 40;
+  background: color-mix(in oklab, var(--ink) 38%, transparent);
+  display: grid; place-items: center; padding: 40px;
+}
+.t-modal {
+  width: 620px; max-width: 100%; max-height: 100%;
+  background: var(--raised); border-radius: 18px;
+  box-shadow: var(--sh-pop), inset 0 0 0 1px var(--line-soft);
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.t-modal-head { display: flex; align-items: center; gap: 12px; padding: 18px 20px 14px; }
+.t-modal-title { font-family: var(--serif); font-size: 22px; font-weight: 500; color: var(--ink); letter-spacing: -.01em; }
+.t-modal-bar {
+  display: flex; align-items: center; gap: 10px; padding: 0 20px 14px;
+  border-bottom: 1px solid var(--line);
+}
+.t-modal-hint { font-size: 12.5px; color: var(--ink-faint); }
+.t-modal-body { flex: 1 1 auto; overflow-y: auto; padding: 18px 20px; min-height: 0; background: var(--surface); }
+.t-md {
+  font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
+  color: var(--ink-soft); margin: 0; white-space: pre-wrap; word-break: break-word;
+  text-rendering: optimizeLegibility;
+}

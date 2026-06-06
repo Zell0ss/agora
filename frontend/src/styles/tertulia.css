@@ -1,0 +1,205 @@
+/* ============================================================
+   Agora — sistema de diseño
+   Salón cálido · papel hueso · serif sobrio + sans para chat
+   Color = identidad de voz, aplicado con moderación.
+   Todo va prefijado .t  y el modo oscuro con .t.t-dark
+   ============================================================ */
+
+.t {
+  /* tipografía */
+  --serif: "Newsreader", Georgia, "Times New Roman", serif;
+  --sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SF Mono", monospace;
+
+  /* superficies — papel hueso, cálido */
+  --paper:    oklch(0.965 0.013 78);   /* fondo del hilo */
+  --sidebar:  oklch(0.945 0.016 76);   /* barra lateral, algo más profunda */
+  --surface:  oklch(0.992 0.005 82);   /* tarjetas, burbujas, inputs */
+  --raised:   oklch(0.998 0.003 82);   /* popovers, dropdowns */
+
+  /* tinta */
+  --ink:      oklch(0.30 0.018 60);
+  --ink-soft: oklch(0.50 0.014 62);
+  --ink-faint:oklch(0.635 0.011 64);
+  --ink-ghost:oklch(0.74 0.009 66);
+
+  /* líneas */
+  --line:     oklch(0.885 0.012 72);
+  --line-soft:oklch(0.918 0.010 74);
+
+  /* acción primaria — tinta espresso, no compite con las voces */
+  --primary:    oklch(0.34 0.022 54);
+  --primary-ink:oklch(0.97 0.012 82);
+  --primary-hov:oklch(0.28 0.022 54);
+
+  /* burbuja del usuario (neutra, cálida) */
+  --user-bubble: oklch(0.928 0.018 74);
+  --user-ink:    oklch(0.30 0.018 60);
+
+  /* colores de voz (muted, mismo peso, varía el tono) */
+  --voice-vera:  oklch(0.560 0.130 38);   /* terracota  */
+  --voice-bruno: oklch(0.520 0.085 165);  /* salvia     */
+  --voice-iris:  oklch(0.550 0.110 268);  /* índigo     */
+
+  /* tintes muy suaves (fondos de mención / sugerencia) */
+  --tint-vera:  oklch(0.952 0.030 38);
+  --tint-bruno: oklch(0.952 0.026 165);
+  --tint-iris:  oklch(0.956 0.028 268);
+
+  /* avisos */
+  --warn:    oklch(0.55 0.13 38);
+  --warn-bg: oklch(0.955 0.030 38);
+
+  /* sombras */
+  --sh-pop: 0 2px 4px rgba(40,30,20,.06), 0 10px 30px rgba(40,30,20,.12);
+  --sh-card: 0 1px 2px rgba(40,30,20,.05);
+
+  font-family: var(--sans);
+  color: var(--ink);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  box-sizing: border-box;
+}
+.t *, .t *::before, .t *::after { box-sizing: border-box; }
+
+.t.t-dark {
+  --paper:    oklch(0.228 0.012 70);
+  --sidebar:  oklch(0.196 0.012 68);
+  --surface:  oklch(0.268 0.013 70);
+  --raised:   oklch(0.300 0.013 70);
+
+  --ink:      oklch(0.925 0.010 82);
+  --ink-soft: oklch(0.745 0.012 80);
+  --ink-faint:oklch(0.600 0.012 78);
+  --ink-ghost:oklch(0.470 0.012 74);
+
+  --line:     oklch(0.345 0.013 70);
+  --line-soft:oklch(0.305 0.013 70);
+
+  --primary:    oklch(0.905 0.013 82);
+  --primary-ink:oklch(0.225 0.012 70);
+  --primary-hov:oklch(0.955 0.010 82);
+
+  --user-bubble: oklch(0.320 0.015 72);
+  --user-ink:    oklch(0.925 0.010 82);
+
+  --voice-vera:  oklch(0.745 0.125 44);
+  --voice-bruno: oklch(0.760 0.095 166);
+  --voice-iris:  oklch(0.760 0.105 264);
+
+  --tint-vera:  oklch(0.330 0.045 40);
+  --tint-bruno: oklch(0.320 0.036 166);
+  --tint-iris:  oklch(0.335 0.042 264);
+
+  --warn:    oklch(0.74 0.12 44);
+  --warn-bg: oklch(0.330 0.045 40);
+
+  --sh-pop: 0 2px 6px rgba(0,0,0,.30), 0 14px 40px rgba(0,0,0,.45);
+  --sh-card: 0 1px 2px rgba(0,0,0,.25);
+}
+
+/* ---- helpers de voz: aplica --vc según data-voice ---- */
+.t [data-voice="vera"]  { --vc: var(--voice-vera);  --vt: var(--tint-vera); }
+.t [data-voice="bruno"] { --vc: var(--voice-bruno); --vt: var(--tint-bruno); }
+.t [data-voice="iris"]  { --vc: var(--voice-iris);  --vt: var(--tint-iris); }
+
+/* ============================================================
+   Átomos
+   ============================================================ */
+
+/* Avatar — círculo pequeño, aro del color de la voz + inicial/emoji */
+.t-av {
+  --sz: 34px;
+  width: var(--sz); height: var(--sz);
+  flex: 0 0 auto;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  font-family: var(--sans);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--vc, var(--ink-soft));
+  background: color-mix(in oklab, var(--vc, var(--ink-faint)) 13%, var(--surface));
+  box-shadow: inset 0 0 0 1.5px var(--vc, var(--line));
+  user-select: none;
+  overflow: hidden;
+}
+.t-av.is-emoji { color: inherit; }
+.t-av.is-solid {
+  background: var(--vc);
+  color: #fff;
+  box-shadow: none;
+}
+.t.t-dark .t-av.is-solid { color: oklch(0.20 0.01 70); }
+.t-av.is-user {
+  --vc: var(--ink-faint);
+  background: color-mix(in oklab, var(--ink-faint) 14%, var(--surface));
+}
+.t-av img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Apilado de avatares */
+.t-stack { display: flex; align-items: center; }
+.t-stack .t-av { box-shadow: inset 0 0 0 1.5px var(--vc, var(--line)), 0 0 0 2.5px var(--ring, var(--paper)); }
+.t-stack .t-av + .t-av { margin-left: -10px; }
+
+/* Etiqueta de función — micro-detalle de rol */
+.t-rolechip {
+  font-family: var(--sans);
+  font-size: 11.5px;
+  font-weight: 500;
+  letter-spacing: .01em;
+  color: var(--ink-faint);
+}
+
+/* Pill / badge */
+.t-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  font-size: 12px; font-weight: 600; letter-spacing: .02em;
+  padding: 3px 9px; border-radius: 999px;
+  color: var(--ink-soft);
+  background: color-mix(in oklab, var(--ink-faint) 10%, transparent);
+}
+.t-badge.is-mode {
+  color: var(--ink-soft);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* Botones */
+.t-btn {
+  font-family: var(--sans); font-size: 14px; font-weight: 600;
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 8px 14px; border-radius: 9px; border: none; cursor: pointer;
+  color: var(--ink); background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: background .12s, box-shadow .12s;
+  white-space: nowrap;
+}
+.t-btn:hover { background: color-mix(in oklab, var(--ink-faint) 8%, transparent); }
+.t-btn.is-primary {
+  color: var(--primary-ink); background: var(--primary); box-shadow: none;
+}
+.t-btn.is-ghost { box-shadow: none; color: var(--ink-soft); }
+.t-btn.is-sm { padding: 6px 10px; font-size: 13px; border-radius: 8px; }
+.t-iconbtn {
+  width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer;
+  display: grid; place-items: center;
+  color: var(--ink-soft); background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: background .12s, color .12s;
+}
+.t-iconbtn:hover { background: color-mix(in oklab, var(--ink-faint) 8%, transparent); color: var(--ink); }
+
+/* Contador de coste — discreto, mono */
+.t-cost {
+  font-family: var(--mono); font-size: 12px;
+  color: var(--ink-ghost); letter-spacing: -.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hora */
+.t-time { font-family: var(--mono); font-size: 11px; color: var(--ink-ghost); font-variant-numeric: tabular-nums; }
+
+/* Scroll sutil dentro de mockups */
+.t-scroll::-webkit-scrollbar { width: 8px; }
+.t-scroll::-webkit-scrollbar-thumb { background: color-mix(in oklab, var(--ink-faint) 22%, transparent); border-radius: 8px; }
