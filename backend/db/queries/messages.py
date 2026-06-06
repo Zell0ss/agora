@@ -138,7 +138,7 @@ async def get_channel_messages(channel_id: int) -> list[dict]:
             SELECT id, role, profile_id, content, cost_usd, created_at
             FROM messages
             WHERE channel_id = %s
-            ORDER BY created_at ASC
+            ORDER BY id ASC
             """,
             (channel_id,),
         )
