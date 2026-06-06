@@ -1,9 +1,5 @@
 from backend.db.connection import get_db
 
-_UPDATABLE_FIELDS = frozenset(
-    {"name", "model", "temperature", "color", "funcion", "system_prompt"}
-)
-
 
 async def get_profile(profile_id: int) -> dict | None:
     async with get_db() as cur:
