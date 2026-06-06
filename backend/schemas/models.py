@@ -59,6 +59,7 @@ class ChannelOut(BaseModel):
     mode: str
     incognito: bool
     created_at: datetime
+    updated_at: datetime
 
 
 class ChannelPatch(BaseModel):
