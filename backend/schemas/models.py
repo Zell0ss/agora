@@ -68,6 +68,15 @@ class ChannelPatch(BaseModel):
     incognito: bool | None = None
 
 
+class MessageOut(BaseModel):
+    id: int
+    role: str
+    profile_id: int | None
+    content: str
+    cost_usd: float | None
+    created_at: datetime
+
+
 # --- Roster ---
 
 

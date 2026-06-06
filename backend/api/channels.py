@@ -1,6 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import Response
 
+from backend.db.queries.messages import get_channel_messages
 from backend.db.queries.channels import (
     add_to_roster,
     count_active_roster,
@@ -17,6 +18,7 @@ from backend.schemas.models import (
     ChannelIn,
     ChannelOut,
     ChannelPatch,
+    MessageOut,
     RosterAddIn,
     RosterEntry,
     RosterPatch,
@@ -54,6 +56,14 @@ async def patch_channel(channel_id: int, body: ChannelPatch):
     fields = body.model_dump(exclude_none=True)
     await update_channel(channel_id, fields)
     return await get_channel(channel_id)
+
+
+@router.get("/{channel_id}/messages", response_model=list[MessageOut])
+async def list_channel_messages(channel_id: int):
+    channel = await get_channel(channel_id)
+    if not channel:
+        raise HTTPException(status_code=404, detail=f"Channel {channel_id} not found")
+    return await get_channel_messages(channel_id)
 
 
 @router.get("/{channel_id}/profiles", response_model=list[RosterEntry])

@@ -131,6 +131,20 @@ async def get_last_human_message(channel_id: int) -> dict | None:
         return await cur.fetchone()
 
 
+async def get_channel_messages(channel_id: int) -> list[dict]:
+    async with get_db() as cur:
+        await cur.execute(
+            """
+            SELECT id, role, profile_id, content, cost_usd, created_at
+            FROM messages
+            WHERE channel_id = %s
+            ORDER BY created_at ASC
+            """,
+            (channel_id,),
+        )
+        return await cur.fetchall()
+
+
 async def insert_summary(
     channel_id: int, content: str, covers_up_to_msg_id: int
 ) -> int:
