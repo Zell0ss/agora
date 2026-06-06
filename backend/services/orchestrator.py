@@ -57,7 +57,9 @@ async def run_turn(
     )
 
     mention = parse_mention(human_content, roster)
-    speakers = [mention] if mention else roster
+    speakers = (
+        [mention] if mention else roster
+    )  # unrecognized @name → full roster speaks
 
     for profile in speakers:
         summary = await get_latest_summary(channel_id)
