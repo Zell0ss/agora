@@ -19,7 +19,7 @@ export default function App() {
   }, [fetchChannels])
 
   return (
-    <div className={`t${theme === 'dark' ? ' t-dark' : ''}`} style={{ height: '100vh', overflow: 'hidden' }}>
+    <div className="t" style={{ height: '100vh', overflow: 'hidden' }}>
       <Routes>
         <Route path="/" element={<ChatScreen />} />
         <Route path="/channels/new" element={<CreateScreen />} />
