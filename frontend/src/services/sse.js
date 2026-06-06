@@ -19,6 +19,7 @@ export function parseSSEChunk(text, leftover, onEvent) {
 }
 
 async function consumeStream(body, onEvent) {
+  if (!body) throw new Error('Response body is null')
   const reader = body.getReader()
   const decoder = new TextDecoder()
   let leftover = ''
