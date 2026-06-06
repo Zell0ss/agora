@@ -6,11 +6,13 @@ from backend.api.channels import router as channels_router
 from backend.api.profiles import router as profiles_router
 from backend.api.stream import router as stream_router
 from backend.db.connection import close_pool, init_pool
+from backend.logger import logger
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     await init_pool()
+    logger.info("startup: DB pool initialized")
     yield
     await close_pool()
 

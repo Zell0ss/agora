@@ -9,7 +9,7 @@ async def _mock_run_turn(channel_id: int, human_content: str):
     yield f"data: {json.dumps({'type': 'start', 'profile_id': 1, 'profile_name': 'Sócrates'}, ensure_ascii=False)}\n\n"
     yield f"data: {json.dumps({'type': 'token', 'profile_id': 1, 'token': 'Hola'}, ensure_ascii=False)}\n\n"
     yield f"data: {json.dumps({'type': 'done', 'profile_id': 1, 'profile_name': 'Sócrates', 'tokens_in': 5, 'tokens_out': 3, 'cost_usd': '0.000009'}, ensure_ascii=False)}\n\n"
-    yield "data: [TURN_COMPLETE]\n\n"
+    yield f"data: {json.dumps({'type': 'TURN_COMPLETE', 'total_cost_usd': '0.000009'}, ensure_ascii=False)}\n\n"
 
 
 MOCK_CHANNEL = {"id": 1, "title": "Test", "mode": "debate", "incognito": False}
