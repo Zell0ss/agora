@@ -12,6 +12,7 @@ from backend.db.queries.messages import (
 )
 from backend.logger import logger
 from backend.services.andamio import build_context
+from backend.services.compressor import maybe_compress
 from backend.services.llm import stream_turn
 
 
@@ -30,12 +31,24 @@ def parse_mention(text: str, roster: list[dict]) -> dict | None:
     )
 
 
-async def run_turn(channel_id: int, human_content: str) -> AsyncGenerator[str, None]:
-    await insert_message(channel_id=channel_id, role="human", content=human_content)
+async def run_turn(
+    channel_id: int,
+    human_content: str,
+    save_human: bool = True,
+) -> AsyncGenerator[str, None]:
+    await maybe_compress(channel_id)
+
+    if save_human:
+        await insert_message(channel_id=channel_id, role="human", content=human_content)
 
     channel = await get_channel(channel_id)
     roster = await get_active_roster(channel_id)
     profile_names: dict[int, str] = {p["id"]: p["name"] for p in roster}
+
+    if not roster:
+        total_cost = await get_total_cost_usd(channel_id)
+        yield f"data: {json.dumps({'type': 'TURN_COMPLETE', 'total_cost_usd': str(total_cost)}, ensure_ascii=False)}\n\n"
+        return
 
     logger.info(
         "turn started channel_id={} profiles={}",
@@ -43,7 +56,10 @@ async def run_turn(channel_id: int, human_content: str) -> AsyncGenerator[str, N
         [p["name"] for p in roster],
     )
 
-    for profile in roster:
+    mention = parse_mention(human_content, roster)
+    speakers = [mention] if mention else roster
+
+    for profile in speakers:
         summary = await get_latest_summary(channel_id)
         after_id = summary["covers_up_to_msg_id"] if summary else None
         messages = await get_context_messages(channel_id, after_msg_id=after_id)
