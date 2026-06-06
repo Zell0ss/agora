@@ -55,7 +55,7 @@ async def get_full_roster(channel_id: int) -> list[dict]:
             SELECT p.id AS profile_id, p.name, p.tipo, cp.speaking_order, cp.active
             FROM channel_profiles cp
             JOIN profiles p ON p.id = cp.profile_id
-            WHERE cp.channel_id = %s AND cp.active = TRUE
+            WHERE cp.channel_id = %s AND cp.active = TRUE AND p.archived = FALSE
             ORDER BY cp.speaking_order
             """,
             (channel_id,),
@@ -70,7 +70,7 @@ async def get_roster_entry(channel_id: int, profile_id: int) -> dict | None:
             SELECT p.id AS profile_id, p.name, p.tipo, cp.speaking_order, cp.active
             FROM channel_profiles cp
             JOIN profiles p ON p.id = cp.profile_id
-            WHERE cp.channel_id = %s AND cp.profile_id = %s
+            WHERE cp.channel_id = %s AND cp.profile_id = %s AND p.archived = FALSE
             """,
             (channel_id, profile_id),
         )
