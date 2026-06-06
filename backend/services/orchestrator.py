@@ -41,7 +41,7 @@ async def run_turn(channel_id: int, human_content: str) -> AsyncGenerator[str, N
             summary=summary,
         )
 
-        yield f"data: {json.dumps({'type': 'start', 'profile_id': profile['id'], 'profile_name': profile['name']})}\n\n"
+        yield f"data: {json.dumps({'type': 'start', 'profile_id': profile['id'], 'profile_name': profile['name']}, ensure_ascii=False)}\n\n"
 
         full_text: list[str] = []
         usage: dict | None = None
@@ -51,7 +51,7 @@ async def run_turn(channel_id: int, human_content: str) -> AsyncGenerator[str, N
         ):
             if isinstance(chunk, str):
                 full_text.append(chunk)
-                yield f"data: {json.dumps({'type': 'token', 'profile_id': profile['id'], 'token': chunk})}\n\n"
+                yield f"data: {json.dumps({'type': 'token', 'profile_id': profile['id'], 'token': chunk}, ensure_ascii=False)}\n\n"
             else:
                 usage = chunk
 
@@ -65,6 +65,6 @@ async def run_turn(channel_id: int, human_content: str) -> AsyncGenerator[str, N
             cost_usd=usage["cost_usd"] if usage else None,
         )
 
-        yield f"data: {json.dumps({'type': 'done', 'profile_id': profile['id'], 'profile_name': profile['name'], 'tokens_in': usage['tokens_in'] if usage else None, 'tokens_out': usage['tokens_out'] if usage else None, 'cost_usd': str(usage['cost_usd']) if usage else None})}\n\n"
+        yield f"data: {json.dumps({'type': 'done', 'profile_id': profile['id'], 'profile_name': profile['name'], 'tokens_in': usage['tokens_in'] if usage else None, 'tokens_out': usage['tokens_out'] if usage else None, 'cost_usd': str(usage['cost_usd']) if usage else None}, ensure_ascii=False)}\n\n"
 
     yield "data: [TURN_COMPLETE]\n\n"
