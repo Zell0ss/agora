@@ -4,7 +4,7 @@ from pathlib import Path
 
 from loguru import logger
 
-_log_path = Path("logs/tertulia.log")
+_log_path = Path(__file__).parent.parent / "logs" / "tertulia.log"
 _log_path.parent.mkdir(parents=True, exist_ok=True)
 
 
