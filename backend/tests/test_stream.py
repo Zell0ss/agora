@@ -5,7 +5,7 @@ from httpx import ASGITransport, AsyncClient
 from unittest.mock import patch, AsyncMock
 
 
-async def _mock_run_turn(channel_id: int, human_content: str):
+async def _mock_run_turn(channel_id: int, human_content: str, save_human: bool = True):
     yield f"data: {json.dumps({'type': 'start', 'profile_id': 1, 'profile_name': 'Sócrates'}, ensure_ascii=False)}\n\n"
     yield f"data: {json.dumps({'type': 'token', 'profile_id': 1, 'token': 'Hola'}, ensure_ascii=False)}\n\n"
     yield f"data: {json.dumps({'type': 'done', 'profile_id': 1, 'profile_name': 'Sócrates', 'tokens_in': 5, 'tokens_out': 3, 'cost_usd': '0.000009'}, ensure_ascii=False)}\n\n"
@@ -50,3 +50,61 @@ async def test_post_message_404_unknown_channel():
         ) as ac:
             resp = await ac.post("/channels/999/messages", json={"content": "hola"})
     assert resp.status_code == 404
+
+
+MOCK_HUMAN_MSG = {"id": 5, "role": "human", "content": "¿SaaS?", "channel_id": 1}
+
+
+@pytest.mark.asyncio
+async def test_post_round_streams_sse():
+    from backend.main import app
+
+    with (
+        patch("backend.api.stream.get_channel", AsyncMock(return_value=MOCK_CHANNEL)),
+        patch(
+            "backend.api.stream.get_last_human_message",
+            AsyncMock(return_value=MOCK_HUMAN_MSG),
+        ),
+        patch("backend.api.stream.run_turn", _mock_run_turn),
+    ):
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+            async with ac.stream("POST", "/channels/1/rounds") as resp:
+                assert resp.status_code == 200
+                assert "text/event-stream" in resp.headers["content-type"]
+                body = ""
+                async for chunk in resp.aiter_text():
+                    body += chunk
+
+    assert "TURN_COMPLETE" in body
+
+
+@pytest.mark.asyncio
+async def test_post_round_404_unknown_channel():
+    from backend.main import app
+
+    with patch("backend.api.stream.get_channel", AsyncMock(return_value=None)):
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+            resp = await ac.post("/channels/1/rounds")
+    assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_post_round_400_no_human_messages():
+    from backend.main import app
+
+    with (
+        patch("backend.api.stream.get_channel", AsyncMock(return_value=MOCK_CHANNEL)),
+        patch(
+            "backend.api.stream.get_last_human_message",
+            AsyncMock(return_value=None),
+        ),
+    ):
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+            resp = await ac.post("/channels/1/rounds")
+    assert resp.status_code == 400
