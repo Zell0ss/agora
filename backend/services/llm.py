@@ -31,7 +31,7 @@ async def stream_turn(
         max_tokens=1024,
         system=system,
         messages=messages,
-        temperature=temperature,
+        temperature=float(temperature),
     ) as stream:
         async for text in stream.text_stream:
             yield text
