@@ -152,3 +152,46 @@ async def test_run_turn_empty_roster_yields_only_turn_complete():
     event = json.loads(chunks[0].removeprefix("data: ").strip())
     assert event["type"] == "TURN_COMPLETE"
     assert event["total_cost_usd"] == "0"
+
+
+def test_parse_mention_exact_match():
+    from backend.services.orchestrator import parse_mention
+
+    roster = [{"id": 1, "name": "Sócrates"}, {"id": 2, "name": "Platón"}]
+    result = parse_mention("Hola @Sócrates, ¿qué piensas?", roster)
+    assert result is not None
+    assert result["id"] == 1
+
+
+def test_parse_mention_accent_insensitive():
+    from backend.services.orchestrator import parse_mention
+
+    roster = [{"id": 1, "name": "Sócrates"}]
+    result = parse_mention("@Socrates qué piensas?", roster)
+    assert result is not None
+    assert result["id"] == 1
+
+
+def test_parse_mention_case_insensitive():
+    from backend.services.orchestrator import parse_mention
+
+    roster = [{"id": 1, "name": "Sócrates"}]
+    result = parse_mention("@SOCRATES", roster)
+    assert result is not None
+    assert result["id"] == 1
+
+
+def test_parse_mention_no_match_returns_none():
+    from backend.services.orchestrator import parse_mention
+
+    roster = [{"id": 1, "name": "Sócrates"}]
+    result = parse_mention("@Aristoteles qué piensas?", roster)
+    assert result is None
+
+
+def test_parse_mention_no_at_symbol():
+    from backend.services.orchestrator import parse_mention
+
+    roster = [{"id": 1, "name": "Sócrates"}]
+    result = parse_mention("Hola Sócrates", roster)
+    assert result is None

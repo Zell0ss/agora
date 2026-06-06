@@ -1,4 +1,6 @@
 import json
+import re
+import unicodedata
 from collections.abc import AsyncGenerator
 
 from backend.db.queries.channels import get_active_roster, get_channel
@@ -11,6 +13,21 @@ from backend.db.queries.messages import (
 from backend.logger import logger
 from backend.services.andamio import build_context
 from backend.services.llm import stream_turn
+
+
+def _normalize(s: str) -> str:
+    return unicodedata.normalize("NFD", s).encode("ascii", "ignore").decode().lower()
+
+
+def parse_mention(text: str, roster: list[dict]) -> dict | None:
+    match = re.search(r"@(\S+)", text)
+    if not match:
+        return None
+    mention = _normalize(match.group(1).rstrip(",.!?;:"))
+    return next(
+        (p for p in roster if _normalize(p["name"]) == mention),
+        None,
+    )
 
 
 async def run_turn(channel_id: int, human_content: str) -> AsyncGenerator[str, None]:
