@@ -15,7 +15,8 @@ logs/
 *.log
 .venv
 .claude 
-docs/
+docs/*
+!docs/superpowers/
 docs-disenio/
 .ruff_cache/
 .pytest_cache/
