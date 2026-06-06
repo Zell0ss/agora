@@ -14,7 +14,12 @@ frontend/dist/
 logs/
 *.log
 .venv
-
+.claude 
+docs/
+docs-disenio/
+.ruff_cache/
+.pytest_cache/
+.env
 # Design bundles (extracted content committed instead)
 docs-dev/**/*.zip
 
