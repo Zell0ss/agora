@@ -37,14 +37,26 @@
   --user-ink:    oklch(0.30 0.018 60);
 
   /* colores de voz (muted, mismo peso, varía el tono) */
-  --voice-vera:  oklch(0.560 0.130 38);   /* terracota  */
-  --voice-bruno: oklch(0.520 0.085 165);  /* salvia     */
-  --voice-iris:  oklch(0.550 0.110 268);  /* índigo     */
+  --voice-vera:    oklch(0.560 0.130 38);   /* terracota  */
+  --voice-bruno:   oklch(0.520 0.085 165);  /* salvia     */
+  --voice-iris:    oklch(0.550 0.110 268);  /* índigo     */
+  --voice-oro:     oklch(0.620 0.120 85);   /* dorado     */
+  --voice-purpura: oklch(0.520 0.130 305);  /* morado     */
+  --voice-gris:    oklch(0.500 0.018 255);  /* gris neutro */
+  --voice-abismo:  oklch(0.500 0.115 195);  /* verde abisal */
+  --voice-rojo:    oklch(0.530 0.155 18);   /* rojo corrección */
+  --voice-naranja: oklch(0.600 0.130 55);   /* naranja    */
 
   /* tintes muy suaves (fondos de mención / sugerencia) */
-  --tint-vera:  oklch(0.952 0.030 38);
-  --tint-bruno: oklch(0.952 0.026 165);
-  --tint-iris:  oklch(0.956 0.028 268);
+  --tint-vera:    oklch(0.952 0.030 38);
+  --tint-bruno:   oklch(0.952 0.026 165);
+  --tint-iris:    oklch(0.956 0.028 268);
+  --tint-oro:     oklch(0.960 0.028 85);
+  --tint-purpura: oklch(0.955 0.028 305);
+  --tint-gris:    oklch(0.958 0.006 255);
+  --tint-abismo:  oklch(0.953 0.026 195);
+  --tint-rojo:    oklch(0.955 0.032 18);
+  --tint-naranja: oklch(0.958 0.030 55);
 
   /* avisos */
   --warn:    oklch(0.55 0.13 38);
@@ -84,13 +96,25 @@
   --user-bubble: oklch(0.320 0.015 72);
   --user-ink:    oklch(0.925 0.010 82);
 
-  --voice-vera:  oklch(0.745 0.125 44);
-  --voice-bruno: oklch(0.760 0.095 166);
-  --voice-iris:  oklch(0.760 0.105 264);
+  --voice-vera:    oklch(0.745 0.125 44);
+  --voice-bruno:   oklch(0.760 0.095 166);
+  --voice-iris:    oklch(0.760 0.105 264);
+  --voice-oro:     oklch(0.760 0.118 85);
+  --voice-purpura: oklch(0.760 0.125 305);
+  --voice-gris:    oklch(0.740 0.015 255);
+  --voice-abismo:  oklch(0.740 0.108 195);
+  --voice-rojo:    oklch(0.755 0.145 18);
+  --voice-naranja: oklch(0.760 0.125 55);
 
-  --tint-vera:  oklch(0.330 0.045 40);
-  --tint-bruno: oklch(0.320 0.036 166);
-  --tint-iris:  oklch(0.335 0.042 264);
+  --tint-vera:    oklch(0.330 0.045 40);
+  --tint-bruno:   oklch(0.320 0.036 166);
+  --tint-iris:    oklch(0.335 0.042 264);
+  --tint-oro:     oklch(0.325 0.040 85);
+  --tint-purpura: oklch(0.328 0.042 305);
+  --tint-gris:    oklch(0.328 0.008 255);
+  --tint-abismo:  oklch(0.326 0.038 195);
+  --tint-rojo:    oklch(0.328 0.048 18);
+  --tint-naranja: oklch(0.328 0.044 55);
 
   --warn:    oklch(0.74 0.12 44);
   --warn-bg: oklch(0.330 0.045 40);
@@ -100,9 +124,15 @@
 }
 
 /* ---- helpers de voz: aplica --vc según data-voice ---- */
-.t [data-voice="vera"]  { --vc: var(--voice-vera);  --vt: var(--tint-vera); }
-.t [data-voice="bruno"] { --vc: var(--voice-bruno); --vt: var(--tint-bruno); }
-.t [data-voice="iris"]  { --vc: var(--voice-iris);  --vt: var(--tint-iris); }
+.t [data-voice="vera"]    { --vc: var(--voice-vera);    --vt: var(--tint-vera); }
+.t [data-voice="bruno"]   { --vc: var(--voice-bruno);   --vt: var(--tint-bruno); }
+.t [data-voice="iris"]    { --vc: var(--voice-iris);    --vt: var(--tint-iris); }
+.t [data-voice="oro"]     { --vc: var(--voice-oro);     --vt: var(--tint-oro); }
+.t [data-voice="purpura"] { --vc: var(--voice-purpura); --vt: var(--tint-purpura); }
+.t [data-voice="gris"]    { --vc: var(--voice-gris);    --vt: var(--tint-gris); }
+.t [data-voice="abismo"]  { --vc: var(--voice-abismo);  --vt: var(--tint-abismo); }
+.t [data-voice="rojo"]    { --vc: var(--voice-rojo);    --vt: var(--tint-rojo); }
+.t [data-voice="naranja"] { --vc: var(--voice-naranja); --vt: var(--tint-naranja); }
 
 /* ============================================================
    Átomos

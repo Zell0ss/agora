@@ -114,6 +114,18 @@ export default function EditorScreen() {
     setDirty(false)
   }
 
+  const duplicate = async () => {
+    if (!activeId || activeId === 'new') return
+    setSaving(true)
+    try {
+      const copy = await createProfile({ ...form, name: `${form.name} (copia)` })
+      setProfiles((ps) => [...ps, copy])
+      select(copy)
+    } finally {
+      setSaving(false)
+    }
+  }
+
   const active = profiles.find((p) => p.id === activeId)
 
   return (
@@ -184,7 +196,7 @@ export default function EditorScreen() {
               <div className="t-fld" style={{ gridColumn: 'span 12' }}>
                 <div className="t-field-label">Color de voz</div>
                 <div className="t-voicerow">
-                  {['vera', 'bruno', 'iris'].map((v) => (
+                  {['vera', 'bruno', 'iris', 'oro', 'purpura', 'gris', 'abismo', 'rojo', 'naranja'].map((v) => (
                     <VoiceSwatch key={v} id={v} on={form.color === v} onClick={() => set('color', v)} />
                   ))}
                   <span className="t-voicerow-note">El color identifica a {form.name || 'este perfil'} en el chat.</span>
@@ -225,7 +237,12 @@ export default function EditorScreen() {
           <div className="t-ed-form-foot">
             {activeId !== 'new' && (
               <button className="t-btn is-sm is-ghost" style={{ color: 'var(--warn)' }} onClick={remove}>
-                Eliminar perfil
+                Eliminar
+              </button>
+            )}
+            {activeId !== 'new' && (
+              <button className="t-btn is-sm is-ghost" onClick={duplicate} disabled={saving}>
+                <Icon d={Ico.copy} size={14} />Duplicar
               </button>
             )}
             <div className="t-head-spacer" />

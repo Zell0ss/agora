@@ -74,6 +74,27 @@
 /* ---- hilo ---- */
 .t-thread { flex: 1 1 auto; overflow-y: auto; padding: 26px 0 8px; min-height: 0; }
 .t-thread-inner { max-width: 760px; margin: 0 auto; padding: 0 30px; display: flex; flex-direction: column; gap: 22px; }
+
+/* botón de reanudar autoscroll */
+.t-autoscroll-anchor {
+  position: sticky;
+  bottom: 14px;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: none;
+  z-index: 10;
+}
+.t-autoscroll-btn {
+  pointer-events: auto;
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 6px 13px 6px 10px;
+  border-radius: 999px; border: none; cursor: pointer;
+  font-size: 12.5px; font-family: var(--sans); font-weight: 600;
+  color: var(--primary-ink); background: var(--primary);
+  box-shadow: 0 2px 10px rgba(40,30,20,.28);
+  transition: opacity .15s, transform .15s;
+}
+.t-autoscroll-btn:hover { opacity: .85; transform: translateY(-1px); }
 .t-daysep { display: flex; align-items: center; justify-content: center; }
 .t-daysep span { font-size: 11.5px; color: var(--ink-ghost); background: var(--paper); padding: 0 12px; font-family: var(--mono); }
 
@@ -113,6 +134,28 @@
   background: var(--vt); padding: 9px 14px 10px; border-radius: 4px 13px 13px 13px;
 }
 .t-msg.row-tint .t-msg-text { max-width: 54ch; }
+
+/* ---- markdown en mensajes de tertulianos ---- */
+.t-md-msg { font-size: 15.5px; line-height: 1.58; color: var(--ink); text-wrap: pretty; max-width: 54ch; }
+.t-md-msg p { margin: 0 0 .65em; }
+.t-md-msg p:last-child { margin-bottom: 0; }
+.t-md-msg strong { font-weight: 700; color: var(--ink); }
+.t-md-msg em { font-style: italic; }
+.t-md-msg h1, .t-md-msg h2, .t-md-msg h3 { font-weight: 700; margin: .8em 0 .3em; line-height: 1.3; }
+.t-md-msg h1 { font-size: 1.15em; }
+.t-md-msg h2 { font-size: 1.05em; }
+.t-md-msg h3 { font-size: 1em; }
+.t-md-msg ul, .t-md-msg ol { margin: .4em 0 .65em 1.3em; padding: 0; }
+.t-md-msg li { margin-bottom: .2em; }
+.t-md-msg code { font-family: var(--mono); font-size: .88em; background: color-mix(in oklab, var(--vc, var(--ink)) 10%, var(--surface)); padding: .1em .35em; border-radius: 3px; }
+.t-md-msg pre { background: color-mix(in oklab, var(--ink) 6%, var(--surface)); border-radius: 6px; padding: 10px 13px; overflow-x: auto; margin: .5em 0; }
+.t-md-msg pre code { background: none; padding: 0; font-size: .85em; }
+.t-md-msg blockquote { border-left: 3px solid var(--vc, var(--line)); padding-left: 12px; margin: .5em 0; color: var(--ink-soft); }
+.t-md-msg hr { border: none; border-top: 1px solid var(--line); margin: .8em 0; }
+.t-md-msg a { color: var(--vc, var(--ink)); text-decoration: underline; }
+.t-md-msg table { border-collapse: collapse; font-size: .93em; margin: .5em 0; }
+.t-md-msg th, .t-md-msg td { border: 1px solid var(--line); padding: 4px 10px; }
+.t-md-msg th { font-weight: 700; background: color-mix(in oklab, var(--vc, var(--ink)) 7%, var(--surface)); }
 
 /* ---- indicadores pensando ---- */
 .t-dots { display: inline-flex; gap: 3px; align-items: center; }
@@ -376,4 +419,59 @@
   font-family: var(--mono); font-size: 12.5px; line-height: 1.7;
   color: var(--ink-soft); margin: 0; white-space: pre-wrap; word-break: break-word;
   text-rendering: optimizeLegibility;
+}
+
+/* síntesis — modal más ancho + estados */
+.t-synth-modal { width: 740px; }
+.t-synth-loading {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 16px; padding: 60px 20px; color: var(--ink-faint); font-size: 14px;
+}
+.t-synth-error {
+  display: flex; align-items: center; gap: 10px;
+  padding: 24px 20px; color: var(--ink-soft); font-size: 14px;
+}
+.t-synth-body { padding: 4px 0; }
+
+/* ============================================================
+   Responsive móvil (< 768px)
+   ============================================================ */
+.t-back-btn {
+  display: none;
+  align-items: center; justify-content: center;
+  width: 34px; height: 34px; flex: 0 0 auto;
+  border: none; border-radius: 50%; cursor: pointer;
+  background: none; color: var(--ink-soft);
+}
+
+@media (max-width: 768px) {
+  /* layout: flex column, un panel visible a la vez, rellena 100% */
+  .t-app { display: flex; flex-direction: column; }
+  .t-app .t-side,
+  .t-app .t-main { flex: 1 1 auto; min-height: 0; width: 100%; }
+
+  /* en vista lista: oculta el main */
+  .t-app:not(.is-chat) .t-main { display: none; }
+
+  /* en vista chat: oculta el sidebar */
+  .t-app.is-chat .t-side { display: none; }
+
+  /* botón atrás visible */
+  .t-back-btn { display: inline-flex; }
+
+  /* ajustes de texto en hilo */
+  .t-msg-text,
+  .t-md-msg { max-width: none; }
+  .t-msg.row-tint .t-msg-text,
+  .t-msg.row-tint .t-md-msg { max-width: none; }
+
+  /* modal exportar a pantalla completa */
+  .t-modal-backdrop { padding: 0; align-items: flex-end; }
+  .t-modal { width: 100%; max-height: 85vh; border-radius: 18px 18px 0 0; }
+
+  /* editor: una columna */
+  .t-editor { grid-template-columns: 1fr; }
+  .t-app:not(.is-ed-form) .t-ed-form { display: none; }
+  .t-app.is-ed-form .t-ed-list { display: none; }
+  .t-app.is-ed-form .t-ed-form { display: flex; }
 }

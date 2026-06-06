@@ -1,14 +1,36 @@
+import ReactMarkdown from 'react-markdown'
+import remarkGfm from 'remark-gfm'
 import Avatar from '../ui/Avatar'
 import { useChannelStore } from '../../store/useChannelStore'
 
-function renderText(text) {
-  const parts = text.split(/(@\w+)/g)
+const MENTION_RE = /(@\S+)/g
+
+function MentionText({ children }) {
+  if (typeof children !== 'string') return children
+  const parts = children.split(MENTION_RE)
   return parts.map((s, i) =>
-    s.startsWith('@')
+    s.match(MENTION_RE)
       ? <span key={i} className="t-mention">{s}</span>
-      : <span key={i}>{s}</span>
+      : s
   )
 }
+
+const MD_COMPONENTS = {
+  p: ({ children }) => <p><MentionText>{children}</MentionText></p>,
+  li: ({ children }) => <li><MentionText>{children}</MentionText></li>,
+}
+
+function MarkdownContent({ text, streaming }) {
+  return (
+    <div className="t-md-msg">
+      <ReactMarkdown remarkPlugins={[remarkGfm]} components={MD_COMPONENTS}>
+        {text}
+      </ReactMarkdown>
+      {streaming && <span className="t-caret" />}
+    </div>
+  )
+}
+
 
 export default function Message({ message }) {
   const roster = useChannelStore((s) => s.roster)
@@ -17,7 +39,7 @@ export default function Message({ message }) {
     return (
       <div className="t-msg is-user">
         <div className="t-bubble is-user">
-          <div className="t-msg-text">{renderText(message.content)}</div>
+          <MarkdownContent text={message.content} streaming={message.streaming} />
           {message.time && <span className="t-time t-bubble-time">{message.time}</span>}
         </div>
       </div>
@@ -37,10 +59,7 @@ export default function Message({ message }) {
           )}
           {message.time && <span className="t-time">{message.time}</span>}
         </div>
-        <div className="t-msg-text">
-          {renderText(message.content)}
-          {message.streaming && <span className="t-caret" />}
-        </div>
+        <MarkdownContent text={message.content} streaming={message.streaming} />
       </div>
     </div>
   )

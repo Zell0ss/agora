@@ -5,19 +5,21 @@ PID_FE  := .pids/frontend.pid
 LOG_DIR := logs
 
 .PHONY: help install dev dev-be dev-fe stop stop-be stop-fe \
-        status restart build deploy test test-be test-fe logs logs-app clean
+        status restart build deploy install-services \
+        test test-be test-fe logs logs-app clean
 
 help:
 	@printf "\nAgora — comandos\n\n"
-	@printf "  make install   Instala dependencias Python (.venv) y npm\n"
-	@printf "  make dev       Arranca backend (8001) + frontend dev (5173)\n"
-	@printf "  make dev-be    Solo backend con --reload\n"
-	@printf "  make dev-fe    Solo frontend dev\n"
-	@printf "  make stop      Para backend y frontend\n"
-	@printf "  make restart   Para y vuelve a arrancar\n"
-	@printf "  make status    Muestra si los procesos están corriendo\n"
-	@printf "  make build     Build de producción del frontend\n"
-	@printf "  make deploy    Build + instala nginx config (requiere sudo)\n"
+	@printf "  make install          Instala dependencias Python (.venv) y npm\n"
+	@printf "  make dev              Arranca backend (8001) + frontend dev (5173)\n"
+	@printf "  make dev-be           Solo backend con --reload\n"
+	@printf "  make dev-fe           Solo frontend dev\n"
+	@printf "  make stop             Para backend y frontend\n"
+	@printf "  make restart          Para y vuelve a arrancar\n"
+	@printf "  make status           Muestra si los procesos están corriendo\n"
+	@printf "  make build            Build de producción del frontend\n"
+	@printf "  make deploy           Build + instala nginx config (requiere sudo)\n"
+	@printf "  make install-services Instala y habilita los servicios systemd (sudo)\n"
 	@printf "  make test      Todos los tests (backend + frontend)\n"
 	@printf "  make test-be   Tests del backend\n"
 	@printf "  make test-fe   Tests del frontend\n"
@@ -34,10 +36,10 @@ install:
 
 # ── Desarrollo ───────────────────────────────────────────────────────────────
 
-dev: .pids $(LOG_DIR)
+dev: .pids
 	$(UVICORN) backend.main:app --host 127.0.0.1 --port 8001 --reload \
 	  > $(LOG_DIR)/backend.log 2>&1 & echo $$! > $(PID_BE)
-	cd frontend && npm run dev > ../$(LOG_DIR)/frontend.log 2>&1 & echo $$! > ../$(PID_FE)
+	cd frontend && npm run dev > ../$(LOG_DIR)/frontend.log 2>&1 & echo $$! > $(PID_FE)
 	@sleep 1
 	@echo ""
 	@echo "  Backend  → http://127.0.0.1:8001  (PID $$(cat $(PID_BE)))"
@@ -48,13 +50,13 @@ dev: .pids $(LOG_DIR)
 	@echo "  make logs-app tertulia.log (LogCentral)"
 	@echo ""
 
-dev-be: .pids $(LOG_DIR)
+dev-be: .pids
 	$(UVICORN) backend.main:app --host 127.0.0.1 --port 8001 --reload \
 	  > $(LOG_DIR)/backend.log 2>&1 & echo $$! > $(PID_BE)
 	@echo "Backend → http://127.0.0.1:8001  (PID $$(cat $(PID_BE)))"
 
-dev-fe: .pids $(LOG_DIR)
-	cd frontend && npm run dev > ../$(LOG_DIR)/frontend.log 2>&1 & echo $$! > ../$(PID_FE)
+dev-fe: .pids
+	cd frontend && npm run dev > ../$(LOG_DIR)/frontend.log 2>&1 & echo $$! > $(PID_FE)
 	@echo "Frontend → http://localhost:5173  (PID $$(cat $(PID_FE)))"
 
 # ── Control de procesos ───────────────────────────────────────────────────────
@@ -108,6 +110,20 @@ deploy: build
 	@echo "✓ Agora en producción → http://seb01:5151 (Tailscale)"
 	@echo ""
 
+install-services:
+	@echo "Instalando servicios systemd..."
+	sudo cp agora-backend.service /etc/systemd/system/agora-backend.service
+	sudo cp agora-frontend.service /etc/systemd/system/agora-frontend.service
+	sudo systemctl daemon-reload
+	sudo systemctl enable agora-backend agora-frontend
+	sudo systemctl start agora-backend agora-frontend
+	@echo ""
+	@echo "✓ Servicios instalados y arrancados"
+	@echo "  Backend  → systemctl status agora-backend"
+	@echo "  Frontend → systemctl status agora-frontend"
+	@echo "  Logs     → journalctl -u agora-backend -u agora-frontend -f"
+	@echo ""
+
 # ── Tests ─────────────────────────────────────────────────────────────────────
 
 test: test-be test-fe
@@ -129,10 +145,7 @@ logs-app:
 # ── Directorios y limpieza ────────────────────────────────────────────────────
 
 .pids:
-	@mkdir -p .pids
-
-$(LOG_DIR):
-	@mkdir -p $(LOG_DIR)
+	@mkdir -p .pids $(LOG_DIR)
 
 clean:
 	rm -rf .pids frontend/dist

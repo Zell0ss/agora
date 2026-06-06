@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Icon, { Ico } from '../ui/Icon'
 import { useChannelStore } from '../../store/useChannelStore'
 import { useThreadStore } from '../../store/useThreadStore'
@@ -30,8 +31,24 @@ export default function ExportModal({ onClose }) {
   const messages = useThreadStore((s) => s.messages)
   const channel = channels.find((c) => c.id === activeChannelId)
   const md = buildMarkdown(channel, messages, roster)
+  const [copied, setCopied] = useState(false)
 
-  const copy = () => navigator.clipboard.writeText(md)
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(md)
+    } catch {
+      const ta = document.createElement('textarea')
+      ta.value = md
+      ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0'
+      document.body.appendChild(ta)
+      ta.focus()
+      ta.select()
+      document.execCommand('copy')
+      document.body.removeChild(ta)
+    }
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   return (
     <div className="t-modal-backdrop" onClick={onClose}>
@@ -48,11 +65,11 @@ export default function ExportModal({ onClose }) {
           <span className="t-modal-hint">Texto sin formato · pégalo donde quieras</span>
           <div className="t-head-spacer" />
           <button className="t-btn is-sm is-primary" onClick={copy}>
-            <Icon d={Ico.copy} size={15} />Copiar
+            <Icon d={Ico.copy} size={15} />{copied ? '✓ Copiado' : 'Copiar'}
           </button>
         </div>
         <div className="t-modal-body t-scroll">
-          <pre className="t-md">{md}</pre>
+          <pre className="t-md" style={{ userSelect: 'all' }}>{md}</pre>
         </div>
       </div>
     </div>

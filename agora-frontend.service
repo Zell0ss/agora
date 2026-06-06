@@ -1,0 +1,17 @@
+[Unit]
+Description=Agora — frontend Vite dev server (puerto 5173)
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/data/agora/frontend
+ExecStart=/data/agora/scripts/start-frontend.sh
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=agora-frontend
+
+[Install]
+WantedBy=multi-user.target

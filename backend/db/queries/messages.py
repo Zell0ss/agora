@@ -131,6 +131,22 @@ async def get_last_human_message(channel_id: int) -> dict | None:
         return await cur.fetchone()
 
 
+async def get_full_transcript(channel_id: int) -> list[dict]:
+    """All human+persona messages with speaker name, ordered chronologically."""
+    async with get_db() as cur:
+        await cur.execute(
+            """
+            SELECT m.role, m.content, p.name AS speaker
+            FROM messages m
+            LEFT JOIN profiles p ON m.profile_id = p.id
+            WHERE m.channel_id = %s AND m.role IN ('human', 'persona')
+            ORDER BY m.id ASC
+            """,
+            (channel_id,),
+        )
+        return await cur.fetchall()
+
+
 async def get_channel_messages(channel_id: int) -> list[dict]:
     async with get_db() as cur:
         await cur.execute(

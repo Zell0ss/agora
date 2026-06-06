@@ -74,6 +74,10 @@ El andamio común vive en `docs-disenio/agora-perfiles-semilla.md`. Los facilita
 2. **Model strings:** verificar strings vigentes al código (pueden cambiar). A fecha del doc: `claude-haiku-4-5-20251001`, `claude-sonnet-4-6`, `claude-opus-4-8`
 3. **`ANTHROPIC_API_KEY`:** confirmar que está en el env de la sesión/servicio antes de codear
 
+## Quirks conocidos de la API de Anthropic
+
+- **`temperature` deprecated en Claude 4.x** — `claude-sonnet-4-6` y `claude-opus-4-8` rechazan el parámetro `temperature` con error 400. Solo pasarlo en modelos más antiguos (p.ej. `claude-haiku-4-5-20251001`). Ver `_MODELS_NO_TEMPERATURE` en `backend/services/llm.py`.
+
 ## Referencia de diseño
 
 - **Decisiones y esquema DB:** `docs-disenio/agora-disenio-decisiones.md`

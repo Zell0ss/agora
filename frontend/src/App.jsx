@@ -11,15 +11,11 @@ export default function App() {
   const fetchChannels = useChannelStore((s) => s.fetchChannels)
 
   useEffect(() => {
-    document.documentElement.classList.toggle('t-dark', theme === 'dark')
-  }, [theme])
-
-  useEffect(() => {
     fetchChannels()
   }, [fetchChannels])
 
   return (
-    <div className="t" style={{ height: '100vh', overflow: 'hidden' }}>
+    <div className={`t${theme === 'dark' ? ' t-dark' : ''}`} style={{ height: '100vh', overflow: 'hidden' }}>
       <Routes>
         <Route path="/" element={<ChatScreen />} />
         <Route path="/channels/new" element={<CreateScreen />} />

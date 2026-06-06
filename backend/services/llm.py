@@ -14,6 +14,9 @@ _COST_PER_TOKEN: dict[str, dict[str, float]] = {
     "claude-opus-4-8": {"in": 15e-6, "out": 75e-6},
 }
 
+# Claude 4.x models have deprecated the temperature parameter
+_MODELS_NO_TEMPERATURE = {"claude-sonnet-4-6", "claude-opus-4-8"}
+
 
 async def stream_turn(
     system: str,
@@ -26,13 +29,16 @@ async def stream_turn(
 
     Final dict shape: {tokens_in: int, tokens_out: int, cost_usd: Decimal}
     """
-    async with client.messages.stream(
-        model=model,
-        max_tokens=1024,
-        system=system,
-        messages=messages,
-        temperature=float(temperature),
-    ) as stream:
+    kwargs: dict = {
+        "model": model,
+        "max_tokens": 1024,
+        "system": system,
+        "messages": messages,
+    }
+    if model not in _MODELS_NO_TEMPERATURE:
+        kwargs["temperature"] = float(temperature)
+
+    async with client.messages.stream(**kwargs) as stream:
         async for text in stream.text_stream:
             yield text
 

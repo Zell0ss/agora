@@ -44,6 +44,15 @@ async def update_profile(profile_id: int, fields: dict) -> None:
         await cur.execute(f"UPDATE profiles SET {set_clause} WHERE id = %s", values)
 
 
+async def get_moderador_profile() -> dict | None:
+    """Find the Moderador utility profile (by funcion keyword)."""
+    async with get_db() as cur:
+        await cur.execute(
+            "SELECT * FROM profiles WHERE LOWER(funcion) LIKE '%moderador%' AND archived = FALSE LIMIT 1"
+        )
+        return await cur.fetchone()
+
+
 async def archive_profile(profile_id: int) -> None:
     async with get_db() as cur:
         await cur.execute(

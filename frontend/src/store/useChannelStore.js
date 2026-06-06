@@ -45,8 +45,12 @@ export const useChannelStore = create((set, get) => ({
         costUsd: m.cost_usd ? String(m.cost_usd) : null,
       }))
 
+      const totalCost = rawMessages.reduce((sum, m) => sum + parseFloat(m.cost_usd || 0), 0)
+
       set({ roster })
-      useThreadStore.getState().setMessages(messages)
+      const ts = useThreadStore.getState()
+      ts.setMessages(messages)
+      ts.setCost(totalCost > 0 ? String(totalCost) : '0')
     } catch (err) {
       useThreadStore.getState().setError('Error al cargar el canal. ¿Reintentar?')
     }

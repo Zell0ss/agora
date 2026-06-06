@@ -1,0 +1,18 @@
+[Unit]
+Description=Agora — backend FastAPI (uvicorn)
+After=network.target mariadb.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/data/agora
+EnvironmentFile=/data/agora/.env
+ExecStart=/data/agora/.venv/bin/uvicorn backend.main:app --host 127.0.0.1 --port 8001
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=agora-backend
+
+[Install]
+WantedBy=multi-user.target

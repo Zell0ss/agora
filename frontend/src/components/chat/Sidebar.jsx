@@ -19,7 +19,7 @@ function ThemeToggle() {
   )
 }
 
-export default function Sidebar() {
+export default function Sidebar({ onChannelSelect }) {
   const [search, setSearch] = useState('')
   const navigate = useNavigate()
   const { channels, activeChannelId, setActive } = useChannelStore()
@@ -56,7 +56,7 @@ export default function Sidebar() {
           <div
             key={c.id}
             className={`t-chan${c.id === activeChannelId ? ' is-active' : ''}`}
-            onClick={() => setActive(c.id)}
+            onClick={() => { setActive(c.id); onChannelSelect?.() }}
             style={{ cursor: 'pointer' }}
           >
             <div className="t-chan-av">
@@ -76,6 +76,12 @@ export default function Sidebar() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="t-ed-list-foot">
+        <button className="t-btn is-sm is-ghost" style={{ width: '100%', justifyContent: 'flex-start', gap: 8 }} onClick={() => navigate('/profiles')}>
+          <Icon d={Ico.users} size={15} />Tertulianos
+        </button>
       </div>
     </aside>
   )
