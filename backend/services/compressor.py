@@ -22,6 +22,8 @@ async def maybe_compress(channel_id: int) -> None:
     if count < COMPRESSION_THRESHOLD:
         return
     chunk = await get_messages_chunk(channel_id, after_id, limit=COMPRESSION_CHUNK)
+    if not chunk:
+        return  # nothing to compress
     text = await _summarize(chunk)
     last_id = chunk[-1]["id"]
     await insert_summary(channel_id, text, covers_up_to_msg_id=last_id)
