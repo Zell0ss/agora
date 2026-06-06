@@ -108,6 +108,18 @@ async def test_patch_profile():
 
 
 @pytest.mark.asyncio
+async def test_patch_profile_not_found():
+    from backend.main import app
+
+    with patch("backend.api.profiles.get_profile", AsyncMock(return_value=None)):
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+            resp = await ac.patch("/profiles/999", json={"color": "rojo"})
+    assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_delete_profile():
     from backend.main import app
 

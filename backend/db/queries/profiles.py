@@ -3,7 +3,9 @@ from backend.db.connection import get_db
 
 async def get_profile(profile_id: int) -> dict | None:
     async with get_db() as cur:
-        await cur.execute("SELECT * FROM profiles WHERE id = %s", (profile_id,))
+        await cur.execute(
+            "SELECT * FROM profiles WHERE id = %s AND archived = FALSE", (profile_id,)
+        )
         return await cur.fetchone()
 
 
