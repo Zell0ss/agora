@@ -181,6 +181,21 @@ async def test_remove_from_roster():
 
 
 @pytest.mark.asyncio
+async def test_remove_from_roster_not_found():
+    from backend.main import app
+
+    with (
+        patch("backend.api.channels.get_channel", AsyncMock(return_value=MOCK_CHANNEL)),
+        patch("backend.api.channels.get_roster_entry", AsyncMock(return_value=None)),
+    ):
+        async with AsyncClient(
+            transport=ASGITransport(app=app), base_url="http://test"
+        ) as ac:
+            resp = await ac.delete("/channels/1/profiles/999")
+    assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
 async def test_patch_roster_entry():
     from backend.main import app
 
