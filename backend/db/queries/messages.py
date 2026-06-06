@@ -58,3 +58,13 @@ async def get_latest_summary(channel_id: int) -> dict | None:
             (channel_id,),
         )
         return await cur.fetchone()
+
+
+async def get_total_cost_usd(channel_id: int) -> Decimal:
+    async with get_db() as cur:
+        await cur.execute(
+            "SELECT COALESCE(SUM(cost_usd), 0) AS total FROM messages WHERE channel_id = %s",
+            (channel_id,),
+        )
+        row = await cur.fetchone()
+        return Decimal(str(row["total"]))
