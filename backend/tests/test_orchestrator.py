@@ -78,6 +78,7 @@ async def test_run_turn_yields_sse_start_tokens_done():
     done_event = next(e for e in events if e["type"] == "done")
     assert done_event["profile_id"] == 1
     assert done_event["tokens_in"] == 10
+    assert done_event["cost_usd"] == "0.000010"
 
 
 @pytest.mark.asyncio
@@ -111,3 +112,27 @@ async def test_run_turn_saves_human_message_first():
     first_call = insert_mock.call_args_list[0]
     assert first_call.kwargs["role"] == "human"
     assert first_call.kwargs["content"] == "Hola"
+
+
+@pytest.mark.asyncio
+async def test_run_turn_empty_roster_yields_only_turn_complete():
+    from backend.services.orchestrator import run_turn
+
+    with (
+        patch(
+            "backend.services.orchestrator.insert_message", AsyncMock(return_value=1)
+        ),
+        patch(
+            "backend.services.orchestrator.get_channel",
+            AsyncMock(return_value=MOCK_CHANNEL),
+        ),
+        patch(
+            "backend.services.orchestrator.get_active_roster",
+            AsyncMock(return_value=[]),
+        ),
+    ):
+        chunks = []
+        async for chunk in run_turn(1, "Hola"):
+            chunks.append(chunk)
+
+    assert chunks == ["data: [TURN_COMPLETE]\n\n"]
