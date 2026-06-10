@@ -107,6 +107,27 @@ async def remove_from_roster(channel_id: int, profile_id: int) -> None:
         )
 
 
+async def get_synthesis_cache(channel_id: int) -> dict | None:
+    async with get_db() as cur:
+        await cur.execute(
+            "SELECT content, up_to_msg_id FROM channel_syntheses WHERE channel_id = %s",
+            (channel_id,),
+        )
+        return await cur.fetchone()
+
+
+async def save_synthesis(channel_id: int, content: str, up_to_msg_id: int) -> None:
+    async with get_db() as cur:
+        await cur.execute(
+            """
+            INSERT INTO channel_syntheses (channel_id, content, up_to_msg_id)
+            VALUES (%s, %s, %s)
+            ON DUPLICATE KEY UPDATE content = VALUES(content), up_to_msg_id = VALUES(up_to_msg_id)
+            """,
+            (channel_id, content, up_to_msg_id),
+        )
+
+
 async def update_roster_entry(channel_id: int, profile_id: int, fields: dict) -> None:
     if not fields:
         return

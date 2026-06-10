@@ -23,25 +23,32 @@ export default function ChatHeader({ onExport, onSynthesize, onBack }) {
         <Icon d={Ico.chevron} size={20} style={{ transform: 'rotate(90deg)' }} />
       </button>
       <div className="t-head-title">{channel.title || 'Sin título'}</div>
-      <span className="t-badge is-mode">{channel.mode === 'debate' ? 'Debate' : 'Crítica'}</span>
-      <div className="t-head-roster">
-        <AvatarStack
-          profiles={roster}
-          size={28}
-          ring="color-mix(in oklab, var(--paper) 85%, var(--surface))"
-        />
-        <button className="t-iconbtn" title="Gestionar tertulianos" onClick={() => navigate('/profiles')}>
-          <Icon d={Ico.userplus} size={18} />
+      {costLabel && <span className="t-cost">{costLabel}</span>}
+
+      <div className="t-head-row-meta">
+        <span className="t-badge is-mode">{channel.mode === 'debate' ? 'Debate' : 'Crítica'}</span>
+        <div className="t-head-roster">
+          <AvatarStack
+            profiles={roster}
+            size={28}
+            ring="color-mix(in oklab, var(--paper) 85%, var(--surface))"
+          />
+          <button className="t-iconbtn" title="Gestionar tertulianos" onClick={() => navigate('/profiles')}>
+            <Icon d={Ico.userplus} size={18} />
+          </button>
+        </div>
+      </div>
+
+      <div className="t-head-spacer" />
+
+      <div className="t-head-row-actions">
+        <button className="t-btn is-sm" onClick={onSynthesize}>
+          <Icon d={Ico.sparkle} size={15} />Síntesis
+        </button>
+        <button className="t-btn is-sm" onClick={onExport}>
+          <Icon d={Ico.export} size={16} />Exportar
         </button>
       </div>
-      <div className="t-head-spacer" />
-      {costLabel && <span className="t-cost">{costLabel}</span>}
-      <button className="t-btn is-sm" onClick={onSynthesize}>
-        <Icon d={Ico.sparkle} size={15} />Síntesis
-      </button>
-      <button className="t-btn is-sm" onClick={onExport}>
-        <Icon d={Ico.export} size={16} />Exportar
-      </button>
     </header>
   )
 }

@@ -2,8 +2,13 @@ import json
 from collections.abc import AsyncGenerator
 from datetime import date
 
-from backend.db.queries.channels import get_active_roster, get_channel
-from backend.db.queries.messages import get_full_transcript
+from backend.db.queries.channels import (
+    get_active_roster,
+    get_channel,
+    get_synthesis_cache,
+    save_synthesis,
+)
+from backend.db.queries.messages import get_full_transcript, get_last_message_id
 from backend.db.queries.profiles import get_moderador_profile
 from backend.services.llm import stream_turn
 
@@ -68,6 +73,16 @@ async def run_synthesis(channel_id: int) -> AsyncGenerator[str, None]:
         yield f"data: {json.dumps({'type': 'error', 'message': 'El canal no tiene mensajes'})}\n\n"
         return
 
+    last_msg_id = await get_last_message_id(channel_id)
+
+    # Return cached synthesis if the conversation hasn't advanced since it was generated
+    cached = await get_synthesis_cache(channel_id)
+    if cached and cached["up_to_msg_id"] == last_msg_id:
+        yield f"data: {json.dumps({'type': 'start'})}\n\n"
+        yield f"data: {json.dumps({'type': 'token', 'token': cached['content']}, ensure_ascii=False)}\n\n"
+        yield f"data: {json.dumps({'type': 'done'})}\n\n"
+        return
+
     roster = await get_active_roster(channel_id)
     participant_names = [p["name"] for p in roster] if roster else []
 
@@ -96,6 +111,7 @@ async def run_synthesis(channel_id: int) -> AsyncGenerator[str, None]:
 
     yield f"data: {json.dumps({'type': 'start'})}\n\n"
 
+    accumulated = []
     try:
         async for chunk in stream_turn(
             system=moderador["system_prompt"],
@@ -104,10 +120,13 @@ async def run_synthesis(channel_id: int) -> AsyncGenerator[str, None]:
             temperature=moderador["temperature"],
         ):
             if isinstance(chunk, str):
+                accumulated.append(chunk)
                 yield f"data: {json.dumps({'type': 'token', 'token': chunk}, ensure_ascii=False)}\n\n"
-            # usage stats not saved for utility calls
     except Exception as exc:
         yield f"data: {json.dumps({'type': 'error', 'message': str(exc)})}\n\n"
         return
+
+    if accumulated and last_msg_id is not None:
+        await save_synthesis(channel_id, "".join(accumulated), last_msg_id)
 
     yield f"data: {json.dumps({'type': 'done'})}\n\n"

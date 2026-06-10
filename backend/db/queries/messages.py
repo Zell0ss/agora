@@ -131,6 +131,16 @@ async def get_last_human_message(channel_id: int) -> dict | None:
         return await cur.fetchone()
 
 
+async def get_last_message_id(channel_id: int) -> int | None:
+    async with get_db() as cur:
+        await cur.execute(
+            "SELECT MAX(id) AS last_id FROM messages WHERE channel_id = %s",
+            (channel_id,),
+        )
+        row = await cur.fetchone()
+        return row["last_id"]
+
+
 async def get_full_transcript(channel_id: int) -> list[dict]:
     """All human+persona messages with speaker name, ordered chronologically."""
     async with get_db() as cur:

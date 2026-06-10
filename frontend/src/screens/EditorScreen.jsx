@@ -127,6 +127,7 @@ export default function EditorScreen() {
   }
 
   const active = profiles.find((p) => p.id === activeId)
+  const [pickerOpen, setPickerOpen] = useState(false)
 
   return (
     <div className="t-editor">
@@ -161,6 +162,47 @@ export default function EditorScreen() {
 
       {activeId && (
         <div className="t-ed-form">
+          {/* Selector compacto — solo visible en móvil */}
+          <div className="t-ed-mobile-picker">
+            <div className="t-ed-picker-nav">
+              <button className="t-btn is-sm is-ghost" onClick={() => navigate('/')}>← Chat</button>
+              <div style={{ flex: 1 }} />
+              <button className="t-iconbtn" onClick={() => { newProfile(); setPickerOpen(false) }}>
+                <Icon d={Ico.plus} size={17} />
+              </button>
+            </div>
+            <button className="t-ed-picker-btn" onClick={() => setPickerOpen((o) => !o)}>
+              <Avatar profile={activeId === 'new' ? { name: form.name || '?', color: form.color } : active} size={30} />
+              <div className="t-ed-picker-info">
+                <span className="t-ed-picker-name" data-voice={form.color}>{form.name || 'Nuevo perfil'}</span>
+                <span className="t-ed-picker-role">{form.funcion?.toLowerCase()}</span>
+              </div>
+              <span className={`t-ed-picker-chevron${pickerOpen ? ' is-open' : ''}`}>
+                <Icon d={Ico.chevron} size={15} />
+              </span>
+            </button>
+            {pickerOpen && (
+              <>
+                <div className="t-ed-picker-backdrop" onClick={() => setPickerOpen(false)} />
+                <div className="t-ed-picker-drop">
+                  {profiles.map((p) => (
+                    <div
+                      key={p.id}
+                      className={`t-ed-litem${p.id === activeId ? ' is-active' : ''}`}
+                      onClick={() => { select(p); setPickerOpen(false) }}
+                    >
+                      <Avatar profile={p} size={30} />
+                      <div style={{ minWidth: 0, flex: 1 }}>
+                        <div className="t-ed-litem-name" data-voice={p.color}>{p.name}</div>
+                        <div className="t-ed-litem-role">{p.funcion?.toLowerCase()}</div>
+                      </div>
+                      {p.tipo === 'facilitador' && <span className="t-tag-fac">fac.</span>}
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
+          </div>
           <div className="t-ed-form-head">
             <Avatar profile={activeId === 'new' ? { name: form.name || '?', color: form.color } : active} size={44} />
             <div style={{ flex: 1, minWidth: 0 }}>
