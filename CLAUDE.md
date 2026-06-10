@@ -68,6 +68,17 @@ El andamio común vive en `docs-disenio/agora-perfiles-semilla.md`. Los facilita
 - ❌ Auth compleja / exposición pública directa — Cloudflare Tunnel si algún día, nunca puerto directo
 - ❌ Andamio para facilitadores — RUIZ recibe su prompt a secas
 
+## Deploy frontend
+
+El frontend se sirve como SPA estática vía nginx en el puerto **5151** — no hay dev server en producción.
+
+```bash
+cd /data/agora/frontend && npm run build   # genera dist/
+sudo systemctl reload nginx                # nginx ya tiene el conf en sites-enabled/agora
+```
+
+El conf nginx (`frontend/nginx.conf`) ya está symlinkado en `/etc/nginx/sites-enabled/agora`. No hace falta reinstalarlo salvo que se borre. El `agora-frontend.service` (Vite dev server en :5173) está **deshabilitado** — no lo reactivar en producción.
+
 ## Antes de codear — verificar siempre
 
 1. **Puerto libre en seb01:** consultar `stack.md` → mapa de puertos antes de fijar el de esta app
