@@ -20,6 +20,7 @@ export default function CreateScreen() {
 
   const [title, setTitle] = useState('')
   const [mode, setMode] = useState('debate')
+  const [baseText, setBaseText] = useState('')
   const [profiles, setProfiles] = useState([])
   const [selected, setSelected] = useState(new Set())
   const [saving, setSaving] = useState(false)
@@ -43,7 +44,11 @@ export default function CreateScreen() {
     if (selected.size === 0 || saving) return
     setSaving(true)
     try {
-      const channel = await createChannel({ title: title || 'Sin título', mode })
+      const channel = await createChannel({
+        title: title || 'Sin título',
+        mode,
+        base_text: baseText.trim() || null,
+      })
       let order = 0
       for (const profileId of selected) {
         await addToRoster(channel.id, { profile_id: profileId, speaking_order: order++ })
@@ -97,6 +102,19 @@ export default function CreateScreen() {
               />
             </div>
           </div>
+
+          {mode === 'critica' && (
+            <div>
+              <div className="t-field-label">Texto a criticar</div>
+              <textarea
+                className="t-textarea"
+                value={baseText}
+                onChange={(e) => setBaseText(e.target.value)}
+                placeholder="Pega aquí el fragmento o capítulo…"
+                rows={8}
+              />
+            </div>
+          )}
 
           <div>
             <div className="t-pickhead">

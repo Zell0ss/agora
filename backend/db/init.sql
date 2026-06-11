@@ -20,6 +20,7 @@ CREATE TABLE IF NOT EXISTS channels (
   title       VARCHAR(160) NOT NULL,
   mode        ENUM('debate','critica') NOT NULL DEFAULT 'debate',
   incognito   BOOLEAN      NOT NULL DEFAULT FALSE,
+  base_text   MEDIUMTEXT   NULL,
   created_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -60,6 +61,15 @@ CREATE TABLE IF NOT EXISTS summaries (
   KEY idx_channel (channel_id, created_at),
   FOREIGN KEY (channel_id)          REFERENCES channels(id) ON DELETE CASCADE,
   FOREIGN KEY (covers_up_to_msg_id) REFERENCES messages(id) ON DELETE RESTRICT
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+CREATE TABLE IF NOT EXISTS channel_syntheses (
+  channel_id    INT          NOT NULL,
+  content       MEDIUMTEXT   NOT NULL,
+  up_to_msg_id  INT          NOT NULL,
+  created_at    TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (channel_id),
+  FOREIGN KEY (channel_id) REFERENCES channels(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- Seed: 1 profile (Sócrates) + 1 test channel

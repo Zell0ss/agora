@@ -106,12 +106,16 @@ async def run_turn(
             cost_usd=usage["cost_usd"] if usage else None,
         )
 
+        cache_write = usage.get("cache_write", 0) if usage else 0
+        cache_read = usage.get("cache_read", 0) if usage else 0
         logger.info(
-            "turn done profile={} tokens_in={} tokens_out={} cost={}",
+            "turn done profile={} tokens_in={} tokens_out={} cost={} cache_write={} cache_read={}",
             profile["name"],
             usage["tokens_in"] if usage else 0,
             usage["tokens_out"] if usage else 0,
             usage["cost_usd"] if usage else 0,
+            cache_write,
+            cache_read,
         )
 
         yield f"data: {json.dumps({'type': 'done', 'profile_id': profile['id'], 'profile_name': profile['name'], 'tokens_in': usage['tokens_in'] if usage else None, 'tokens_out': usage['tokens_out'] if usage else None, 'cost_usd': str(usage['cost_usd']) if usage else None}, ensure_ascii=False)}\n\n"

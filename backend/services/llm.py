@@ -45,8 +45,24 @@ async def stream_turn(
         final = await stream.get_final_message()
         tokens_in = final.usage.input_tokens
         tokens_out = final.usage.output_tokens
+        cache_write = getattr(final.usage, "cache_creation_input_tokens", 0) or 0
+        cache_read = getattr(final.usage, "cache_read_input_tokens", 0) or 0
         prices = _COST_PER_TOKEN.get(model, {"in": 0.0, "out": 0.0})
         cost = Decimal(
-            str(round(tokens_in * prices["in"] + tokens_out * prices["out"], 8))
+            str(
+                round(
+                    tokens_in * prices["in"]
+                    + cache_write * prices["in"] * 1.25
+                    + cache_read * prices["in"] * 0.1
+                    + tokens_out * prices["out"],
+                    8,
+                )
+            )
         )
-        yield {"tokens_in": tokens_in, "tokens_out": tokens_out, "cost_usd": cost}
+        yield {
+            "tokens_in": tokens_in + cache_write + cache_read,
+            "tokens_out": tokens_out,
+            "cost_usd": cost,
+            "cache_write": cache_write,
+            "cache_read": cache_read,
+        }

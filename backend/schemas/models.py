@@ -51,6 +51,7 @@ class ChannelIn(BaseModel):
     title: str
     mode: Literal["debate", "critica"] = "debate"
     incognito: bool = False
+    base_text: str | None = None
 
 
 class ChannelOut(BaseModel):
@@ -58,6 +59,7 @@ class ChannelOut(BaseModel):
     title: str
     mode: str
     incognito: bool
+    base_text: str | None
     created_at: datetime
     updated_at: datetime
 
@@ -66,6 +68,7 @@ class ChannelPatch(BaseModel):
     title: str | None = None
     mode: Literal["debate", "critica"] | None = None
     incognito: bool | None = None
+    base_text: str | None = None
 
 
 class MessageOut(BaseModel):

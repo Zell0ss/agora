@@ -13,11 +13,13 @@ async def list_channels() -> list[dict]:
         return await cur.fetchall()
 
 
-async def insert_channel(title: str, mode: str, incognito: bool) -> int:
+async def insert_channel(
+    title: str, mode: str, incognito: bool, base_text: str | None = None
+) -> int:
     async with get_db() as cur:
         await cur.execute(
-            "INSERT INTO channels (title, mode, incognito) VALUES (%s, %s, %s)",
-            (title, mode, incognito),
+            "INSERT INTO channels (title, mode, incognito, base_text) VALUES (%s, %s, %s, %s)",
+            (title, mode, incognito, base_text),
         )
         return cur.lastrowid
 
@@ -104,6 +106,14 @@ async def remove_from_roster(channel_id: int, profile_id: int) -> None:
         await cur.execute(
             "UPDATE channel_profiles SET active = FALSE WHERE channel_id = %s AND profile_id = %s",
             (channel_id, profile_id),
+        )
+
+
+async def delete_synthesis_cache(channel_id: int) -> None:
+    async with get_db() as cur:
+        await cur.execute(
+            "DELETE FROM channel_syntheses WHERE channel_id = %s",
+            (channel_id,),
         )
 
 

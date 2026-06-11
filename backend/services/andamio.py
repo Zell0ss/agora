@@ -5,7 +5,7 @@ ANDAMIO_DEBATE = (
     "Reglas de la tertulia:\n"
     "- Eres un participante, no un asistente. No estás aquí para complacer ni "
     "para dar la razón. Tu trabajo es aportar TU perspectiva, fiel a quién eres.\n"
-    "- Si al referirte a algo que se ha escrito antes pone que lo ha escrito tu perfil refierete a ello como que lo has escrito tu; ejemplo: `como dije antes: `"
+    "- En la transcripción, los mensajes etiquetados con tu nombre son tuyos: refiérete a ellos en primera persona. Nunca empieces tu mensaje con tu nombre ni con etiqueta de hablante — escribe directamente \n"
     "- Lee lo que han dicho los demás y reacciona a ello nombrándolos: apoya, "
     "mata, matiza o lleva la idea en otra dirección. No repitas lo que ya se ha dicho.\n"
     "- Discrepa cuando discrepes. Busca el punto débil de las ideas, incluidas "
@@ -17,8 +17,8 @@ ANDAMIO_DEBATE = (
     "- Mantente fiel a tu papel. No te conviertas en un Claude genérico y "
     "equilibrado: tu valor está precisamente en tu sesgo.\n"
     "- La tertulia tiene un ritmo: si es el inicio o si en medio de la conversación alguien ha introducido un nuevo tema, "
-    "  es el momento de extenderse un poco mas y dar los dos parrafos completos, pero si la conversacion ya esta en marcha, es mejor ir al grano de lo qu e quieras decir \n"
-    "- Responde en español. \n" \
+    "  es el momento de extenderse un poco mas y dar los dos parrafos completos, pero si la conversacion ya esta en marcha, es mejor ir al grano de lo que quieras decir \n"
+    "- Responde en español. \n"
 )
 
 ANDAMIO_CRITICA = (
@@ -47,7 +47,12 @@ def build_context(
     """
     Returns (system_prompt, api_messages) for the Anthropic API call.
 
-    Matrix (from agora-disenio-decisiones.md §6):
+    The user message uses content blocks with cache_control breakpoints:
+      Block 1: base_text (if set) — stable, always cached
+      Block 2: acta/summary (if set) — changes only on compression
+      Blocks 3…N: transcript messages — last block gets cache breakpoint
+
+    Matrix (system prompt):
       tertuliano + debate  → ANDAMIO_DEBATE + system_prompt
       tertuliano + critica → ANDAMIO_CRITICA + system_prompt
       facilitador          → system_prompt only (no scaffold)
@@ -59,22 +64,52 @@ def build_context(
     else:
         system = ANDAMIO_DEBATE + "\n\n" + profile["system_prompt"]
 
-    lines: list[str] = []
+    blocks: list[dict] = []
 
-    if summary:
-        lines.append(
-            f"[Resumen de la conversación anterior]\n{summary['content']}\n[Fin del resumen]"
+    # Block 1: base_text — immutable during the session, gets its own cache breakpoint
+    base_text = channel.get("base_text")
+    if base_text:
+        blocks.append(
+            {
+                "type": "text",
+                "text": f"[TEXTO OBJETO DE CRÍTICA]\n{base_text}\n[FIN DEL TEXTO]",
+                "cache_control": {"type": "ephemeral"},
+            }
         )
 
+    # Block 2: acta/summary — changes only on compression, no cache breakpoint
+    if summary:
+        blocks.append(
+            {
+                "type": "text",
+                "text": f"[Acta de la conversación]\n{summary['content']}\n[Fin del acta]",
+            }
+        )
+
+    # Blocks 3…N: transcript — one block per message; last block gets cache breakpoint
+    msg_blocks: list[str] = []
     for msg in messages:
         if msg["role"] == "human":
-            lines.append(f"Josem: {msg['content']}")
+            msg_blocks.append(f"Josem: {msg['content']}")
         elif msg["role"] == "persona" and msg.get("profile_id") is not None:
             name = profile_names.get(
                 msg["profile_id"], f"Participante {msg['profile_id']}"
             )
-            lines.append(f"{name}: {msg['content']}")
+            msg_blocks.append(f"{name}: {msg['content']}")
         # role == "system" → skip
 
-    transcript = "\n".join(lines)
-    return system, [{"role": "user", "content": transcript}]
+    for text in msg_blocks[:-1]:
+        blocks.append({"type": "text", "text": text})
+    if msg_blocks:
+        blocks.append(
+            {
+                "type": "text",
+                "text": msg_blocks[-1],
+                "cache_control": {"type": "ephemeral"},
+            }
+        )
+
+    if not blocks:
+        blocks.append({"type": "text", "text": "(La conversación acaba de comenzar.)"})
+
+    return system, [{"role": "user", "content": blocks}]

@@ -5,6 +5,7 @@ from backend.db.queries.messages import get_channel_messages
 from backend.db.queries.channels import (
     add_to_roster,
     count_active_roster,
+    delete_synthesis_cache,
     get_channel,
     get_full_roster,
     get_roster_entry,
@@ -35,7 +36,10 @@ async def list_channels_endpoint():
 @router.post("", response_model=ChannelOut, status_code=201)
 async def create_channel(body: ChannelIn):
     channel_id = await insert_channel(
-        title=body.title, mode=body.mode, incognito=body.incognito
+        title=body.title,
+        mode=body.mode,
+        incognito=body.incognito,
+        base_text=body.base_text,
     )
     return await get_channel(channel_id)
 
@@ -54,6 +58,8 @@ async def patch_channel(channel_id: int, body: ChannelPatch):
     if not channel:
         raise HTTPException(status_code=404, detail=f"Channel {channel_id} not found")
     fields = body.model_dump(exclude_none=True)
+    if "base_text" in fields:
+        await delete_synthesis_cache(channel_id)
     await update_channel(channel_id, fields)
     return await get_channel(channel_id)
 
