@@ -79,6 +79,19 @@ sudo systemctl reload nginx                # nginx ya tiene el conf en sites-ena
 
 El conf nginx (`frontend/nginx.conf`) ya está symlinkado en `/etc/nginx/sites-enabled/agora`. No hace falta reinstalarlo salvo que se borre. El `agora-frontend.service` (Vite dev server en :5173) está **deshabilitado** — no lo reactivar en producción.
 
+## Servicios systemd
+
+| Servicio | Puerto | Estado |
+|---|---|---|
+| `agora-backend.service` | :8001 (uvicorn, localhost) | activo en producción |
+| `agora-frontend.service` | :5173 (Vite dev) | deshabilitado en producción |
+
+```bash
+sudo systemctl restart agora-backend   # tras cambios en backend
+sudo systemctl status agora-backend    # verificar arranque
+journalctl -u agora-backend -n 30      # logs recientes
+```
+
 ## Antes de codear — verificar siempre
 
 1. **Puerto libre en seb01:** consultar `stack.md` → mapa de puertos antes de fijar el de esta app

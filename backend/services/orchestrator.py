@@ -36,12 +36,11 @@ async def run_turn(
     human_content: str,
     save_human: bool = True,
 ) -> AsyncGenerator[str, None]:
-    await maybe_compress(channel_id)
+    channel = await get_channel(channel_id)
+    await maybe_compress(channel_id, mode=channel["mode"] if channel else "debate")
 
     if save_human:
         await insert_message(channel_id=channel_id, role="human", content=human_content)
-
-    channel = await get_channel(channel_id)
     roster = await get_active_roster(channel_id)
     profile_names: dict[int, str] = {p["id"]: p["name"] for p in roster}
 
