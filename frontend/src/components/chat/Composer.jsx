@@ -102,13 +102,6 @@ export default function Composer() {
             <Icon d={Ico.round} size={16} />Otra ronda
           </button>
           <div style={{ flex: 1 }} />
-          <span className="t-composer-hint" style={{ margin: 0 }}>
-            <span className="t-kbd">@</span> mencionar
-            <span style={{ opacity: 0.5 }}> · </span>
-            <span className="t-kbd">⏎</span> enviar
-            <span style={{ opacity: 0.5 }}> · </span>
-            <span className="t-kbd">⇧⏎</span> nueva línea
-          </span>
           <button
             className="t-sendbtn"
             onClick={send}
@@ -116,6 +109,13 @@ export default function Composer() {
           >
             <Icon d={Ico.send} size={18} />
           </button>
+        </div>
+        <div className="t-composer-hint">
+          <span className="t-kbd">@</span> mencionar
+          <span style={{ opacity: 0.5 }}> · </span>
+          <span className="t-kbd">⏎</span> enviar
+          <span style={{ opacity: 0.5 }}> · </span>
+          <span className="t-kbd">⇧⏎</span> nueva línea
         </div>
       </div>
     </div>
