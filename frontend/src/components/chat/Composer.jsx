@@ -78,16 +78,19 @@ export default function Composer() {
             </div>
           )}
           <div className="t-input-field">
-            <input
+            <textarea
               ref={inputRef}
               value={text}
               onChange={handleInput}
               onKeyDown={handleKeyDown}
               placeholder="Escribe… usa @ para dirigirte a alguien"
               disabled={isStreaming || !activeChannelId}
+              rows={2}
               style={{
                 background: 'none', border: 'none', outline: 'none',
                 flex: 1, font: 'inherit', color: 'inherit', width: '100%',
+                resize: 'vertical', minHeight: '2.8em', maxHeight: '12em',
+                overflowY: 'auto', lineHeight: '1.4',
               }}
             />
           </div>
@@ -111,7 +114,7 @@ export default function Composer() {
         <div className="t-composer-hint">
           <span className="t-kbd">@</span> menciona a un tertuliano
           <span style={{ opacity: 0.5 }}> · </span>
-          <span className="t-kbd">⏎</span> enviar
+          <span className="t-kbd">⏎</span> enviar · <span className="t-kbd">⇧⏎</span> nueva línea
           <span style={{ opacity: 0.5 }}> · </span>
           "Otra ronda" relanza sin escribir nada
         </div>

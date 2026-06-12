@@ -58,4 +58,11 @@ export const useChannelStore = create((set, get) => ({
 
   addChannel: (channel) =>
     set((s) => ({ channels: [channel, ...s.channels] })),
+
+  removeChannel: (channelId) =>
+    set((s) => ({
+      channels: s.channels.filter((c) => c.id !== channelId),
+      activeChannelId: s.activeChannelId === channelId ? null : s.activeChannelId,
+      roster: s.activeChannelId === channelId ? [] : s.roster,
+    })),
 }))

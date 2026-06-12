@@ -5,6 +5,7 @@ from backend.db.queries.messages import get_channel_messages
 from backend.db.queries.channels import (
     add_to_roster,
     count_active_roster,
+    delete_channel,
     delete_synthesis_cache,
     get_channel,
     get_full_roster,
@@ -62,6 +63,15 @@ async def patch_channel(channel_id: int, body: ChannelPatch):
         await delete_synthesis_cache(channel_id)
     await update_channel(channel_id, fields)
     return await get_channel(channel_id)
+
+
+@router.delete("/{channel_id}", status_code=204)
+async def delete_channel_endpoint(channel_id: int):
+    channel = await get_channel(channel_id)
+    if not channel:
+        raise HTTPException(status_code=404, detail=f"Channel {channel_id} not found")
+    await delete_channel(channel_id)
+    return Response(status_code=204)
 
 
 @router.get("/{channel_id}/messages", response_model=list[MessageOut])

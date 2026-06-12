@@ -210,6 +210,8 @@
   color: var(--primary-ink); background: var(--primary); box-shadow: none;
 }
 .t-btn.is-ghost { box-shadow: none; color: var(--ink-soft); }
+.t-btn.is-danger { box-shadow: none; color: #fff; background: var(--danger, #e05252); }
+.t-btn.is-danger:hover { background: color-mix(in oklab, var(--danger, #e05252) 85%, black); }
 .t-btn.is-sm { padding: 6px 10px; font-size: 13px; border-radius: 8px; }
 .t-iconbtn {
   width: 34px; height: 34px; border-radius: 8px; border: none; cursor: pointer;

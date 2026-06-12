@@ -24,6 +24,7 @@ export const addToRoster = (channelId, body) =>
   request('POST', `/channels/${channelId}/profiles`, body)
 export const removeFromRoster = (channelId, profileId) =>
   request('DELETE', `/channels/${channelId}/profiles/${profileId}`)
+export const deleteChannel = (id) => request('DELETE', `/channels/${id}`)
 
 // Profiles
 export const getProfiles = () => request('GET', '/profiles')

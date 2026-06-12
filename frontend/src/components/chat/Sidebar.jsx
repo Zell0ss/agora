@@ -4,6 +4,7 @@ import Icon, { Ico } from '../ui/Icon'
 import AvatarStack from '../ui/AvatarStack'
 import { useAppStore } from '../../store/useAppStore'
 import { useChannelStore } from '../../store/useChannelStore'
+import { deleteChannel } from '../../services/api'
 
 function ThemeToggle() {
   const { theme, toggleTheme } = useAppStore()
@@ -21,8 +22,21 @@ function ThemeToggle() {
 
 export default function Sidebar({ onChannelSelect }) {
   const [search, setSearch] = useState('')
+  const [confirmDeleteId, setConfirmDeleteId] = useState(null)
   const navigate = useNavigate()
-  const { channels, activeChannelId, setActive } = useChannelStore()
+  const { channels, activeChannelId, setActive, removeChannel } = useChannelStore()
+
+  const handleDeleteConfirm = async (e, channelId) => {
+    e.stopPropagation()
+    try {
+      await deleteChannel(channelId)
+      removeChannel(channelId)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setConfirmDeleteId(null)
+    }
+  }
 
   const filtered = channels.filter((c) =>
     c.title.toLowerCase().includes(search.toLowerCase())
@@ -56,24 +70,53 @@ export default function Sidebar({ onChannelSelect }) {
           <div
             key={c.id}
             className={`t-chan${c.id === activeChannelId ? ' is-active' : ''}`}
-            onClick={() => { setActive(c.id); onChannelSelect?.() }}
-            style={{ cursor: 'pointer' }}
+            onClick={() => { if (confirmDeleteId !== c.id) { setActive(c.id); onChannelSelect?.() } }}
+            style={{ cursor: confirmDeleteId === c.id ? 'default' : 'pointer' }}
           >
-            <div className="t-chan-av">
-              <AvatarStack
-                profiles={c.roster ?? []}
-                size={26}
-                ring={c.id === activeChannelId ? 'var(--surface)' : 'var(--sidebar)'}
-              />
-            </div>
-            <div className="t-chan-mid">
-              <div className="t-chan-title">{c.title || 'Sin título'}</div>
-              <div className="t-chan-prev">{c.preview ?? ''}</div>
-            </div>
-            <div className="t-chan-right">
-              <span className="t-chan-time">{c.time ?? ''}</span>
-              <span className="t-chan-mode">{c.mode?.toUpperCase()}</span>
-            </div>
+            {confirmDeleteId === c.id ? (
+              <>
+                <div className="t-chan-mid" style={{ flex: 1 }}>
+                  <div className="t-chan-title" style={{ fontSize: '0.8rem' }}>
+                    ¿Borrar «{c.title || 'Sin título'}»?
+                  </div>
+                </div>
+                <div className="t-chan-right" style={{ gap: 4 }}>
+                  <button
+                    className="t-btn is-sm is-danger"
+                    onClick={(e) => handleDeleteConfirm(e, c.id)}
+                  >Borrar</button>
+                  <button
+                    className="t-btn is-sm is-ghost"
+                    onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(null) }}
+                  >No</button>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="t-chan-av">
+                  <AvatarStack
+                    profiles={c.roster ?? []}
+                    size={26}
+                    ring={c.id === activeChannelId ? 'var(--surface)' : 'var(--sidebar)'}
+                  />
+                </div>
+                <div className="t-chan-mid">
+                  <div className="t-chan-title">{c.title || 'Sin título'}</div>
+                  <div className="t-chan-prev">{c.preview ?? ''}</div>
+                </div>
+                <div className="t-chan-right">
+                  <span className="t-chan-time">{c.time ?? ''}</span>
+                  <span className="t-chan-mode">{c.mode?.toUpperCase()}</span>
+                  <button
+                    className="t-chan-del"
+                    title="Borrar canal"
+                    onClick={(e) => { e.stopPropagation(); setConfirmDeleteId(c.id) }}
+                  >
+                    <Icon d={Ico.trash} size={13} />
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         ))}
       </div>

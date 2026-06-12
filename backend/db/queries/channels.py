@@ -109,6 +109,13 @@ async def remove_from_roster(channel_id: int, profile_id: int) -> None:
         )
 
 
+async def delete_channel(channel_id: int) -> None:
+    async with get_db() as cur:
+        # Delete summaries first to avoid RESTRICT conflict (summaries.covers_up_to_msg_id → messages)
+        await cur.execute("DELETE FROM summaries WHERE channel_id = %s", (channel_id,))
+        await cur.execute("DELETE FROM channels WHERE id = %s", (channel_id,))
+
+
 async def delete_synthesis_cache(channel_id: int) -> None:
     async with get_db() as cur:
         await cur.execute(
