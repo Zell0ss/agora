@@ -193,16 +193,12 @@
 .t-composer { padding: 12px 30px 20px; border-top: 1px solid var(--line); background: color-mix(in oklab, var(--paper) 80%, var(--surface)); }
 .t-composer-inner { max-width: 760px; margin: 0 auto; }
 .t-inputbar {
-  display: flex; align-items: flex-end; gap: 10px;
-  background: var(--surface); border-radius: 16px; padding: 8px 8px 8px 16px;
+  background: var(--surface); border-radius: 16px; padding: 10px 14px;
   box-shadow: inset 0 0 0 1px var(--line), var(--sh-card);
 }
-.t-input-field { flex: 1 1 auto; padding: 7px 0; min-height: 24px; }
-.t-input-ph { color: var(--ink-ghost); font-size: 15px; }
-.t-input-typed { font-size: 15px; color: var(--ink); }
-.t-input-actions { display: flex; align-items: center; gap: 8px; }
-.t-sendbtn { width: 38px; height: 38px; border-radius: 11px; border: none; cursor: pointer; display: grid; place-items: center; color: var(--primary-ink); background: var(--primary); }
-.t-composer-hint { display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 12px; color: var(--ink-ghost); padding-left: 4px; }
+.t-input-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
+.t-sendbtn { width: 36px; height: 36px; border-radius: 10px; border: none; cursor: pointer; display: grid; place-items: center; color: var(--primary-ink); background: var(--primary); flex-shrink: 0; }
+.t-composer-hint { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink-ghost); }
 .t-kbd { font-family: var(--mono); font-size: 11px; padding: 1px 5px; border-radius: 4px; background: color-mix(in oklab, var(--ink-faint) 12%, transparent); color: var(--ink-faint); }
 
 /* ---- popover de @mención ---- */

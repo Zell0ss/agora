@@ -77,46 +77,45 @@ export default function Composer() {
               />
             </div>
           )}
-          <div className="t-input-field">
-            <textarea
-              ref={inputRef}
-              value={text}
-              onChange={handleInput}
-              onKeyDown={handleKeyDown}
-              placeholder="Escribe… usa @ para dirigirte a alguien"
-              disabled={isStreaming || !activeChannelId}
-              rows={2}
-              style={{
-                background: 'none', border: 'none', outline: 'none',
-                flex: 1, font: 'inherit', color: 'inherit', width: '100%',
-                resize: 'vertical', minHeight: '2.8em', maxHeight: '12em',
-                overflowY: 'auto', lineHeight: '1.4',
-              }}
-            />
-          </div>
-          <div className="t-input-actions">
-            <button
-              className="t-btn is-sm is-ghost"
-              onClick={handleRound}
-              disabled={isStreaming || !activeChannelId}
-            >
-              <Icon d={Ico.round} size={16} />Otra ronda
-            </button>
-            <button
-              className="t-sendbtn"
-              onClick={send}
-              disabled={!text.trim() || isStreaming || !activeChannelId}
-            >
-              <Icon d={Ico.send} size={18} />
-            </button>
-          </div>
+          <textarea
+            ref={inputRef}
+            value={text}
+            onChange={handleInput}
+            onKeyDown={handleKeyDown}
+            placeholder="Escribe… usa @ para dirigirte a alguien"
+            disabled={isStreaming || !activeChannelId}
+            rows={2}
+            style={{
+              background: 'none', border: 'none', outline: 'none',
+              font: 'inherit', color: 'inherit', width: '100%',
+              resize: 'vertical', minHeight: '2.8em', maxHeight: '12em',
+              overflowY: 'auto', lineHeight: '1.4', display: 'block',
+            }}
+          />
         </div>
-        <div className="t-composer-hint">
-          <span className="t-kbd">@</span> menciona a un tertuliano
-          <span style={{ opacity: 0.5 }}> · </span>
-          <span className="t-kbd">⏎</span> enviar · <span className="t-kbd">⇧⏎</span> nueva línea
-          <span style={{ opacity: 0.5 }}> · </span>
-          "Otra ronda" relanza sin escribir nada
+        <div className="t-input-actions">
+          <button
+            className="t-btn is-sm is-ghost"
+            onClick={handleRound}
+            disabled={isStreaming || !activeChannelId}
+          >
+            <Icon d={Ico.round} size={16} />Otra ronda
+          </button>
+          <div style={{ flex: 1 }} />
+          <span className="t-composer-hint" style={{ margin: 0 }}>
+            <span className="t-kbd">@</span> mencionar
+            <span style={{ opacity: 0.5 }}> · </span>
+            <span className="t-kbd">⏎</span> enviar
+            <span style={{ opacity: 0.5 }}> · </span>
+            <span className="t-kbd">⇧⏎</span> nueva línea
+          </span>
+          <button
+            className="t-sendbtn"
+            onClick={send}
+            disabled={!text.trim() || isStreaming || !activeChannelId}
+          >
+            <Icon d={Ico.send} size={18} />
+          </button>
         </div>
       </div>
     </div>
